@@ -30,12 +30,26 @@ h_grid_padded = applyPeriodicBcs(h_grid_nopadding,stencil_length);
 
 
 %plotting
-[X,Y] = meshgrid(1:Ny,1:Nx)
+X = zeros(Ny,Nx)
+for x = 1:Nx
+    X(:,x) = x;
+end
+Y = zeros(Ny,Nx)
+for y = 1:Ny
+    Y(y,:) = y;
+end
 figure()
 plot3(X,Y,h_grid_nopadding)
 
 %plotting padded grid
-[X_pad,Y_pad] = meshgrid(1:Ny+6,1:Nx+6)
+X_pad = zeros(Ny+6,Nx+6)
+for x = 1:Nx
+    X_pad(:,x) = x;
+end
+Y_pad = zeros(Ny+6,Nx+6)
+for y = 1:Ny
+    Y_pad(y,:) = y;
+end
 figure()
 plot3(X_pad,Y_pad,h_grid_padded)
 
@@ -51,19 +65,18 @@ function grid_padded = applyPeriodicBcs(grid_nopadding,stencil_length)
 
     grid_padded = zeros(Ny_padded,Nx_padded);
     
-    grid_padded(4:36-3,4:56-3) = grid_nopadding;
+    grid_padded(pad:(end-1)-(pad),pad:(end-1)-(pad)) = grid_nopadding;
 
-   
     %top_rows
-    grid_padded(1:pad,pad+1:Nx_padded-pad) = grid_nopadding(Ny-pad+1:Ny,:);
+    grid_padded(1:pad+1,pad:Ny-pad) = grid_nopadding(Ny-pad:Ny,:);
 
     %bottom rows
-    grid_padded(Ny_padded-pad+1:Ny_padded,pad+1:Nx_padded-pad) = grid_nopadding(1:pad,:);
+    grid_padded(Ny-pad:Ny,pad:Ny-pad) = grid_nopadding(1:pad,:);
 
     %left columns
-    grid_padded(pad+1:Ny_padded-pad,1:pad) = grid_nopadding(:,Nx-pad+1:Nx);
+    grid_padded(pad+1:end-(pad),1:pad) = grid_nopadding(:,end-(pad-1):end);
 
     %right columns
-    grid_padded(pad+1:Ny_padded-pad,Nx_padded-pad+1:Nx_padded) = grid_nopadding(:,1:pad);
+    grid_padded(pad+1:end-(pad),end-(pad-1):end) = grid_nopadding(:,1:pad);
 
 end
