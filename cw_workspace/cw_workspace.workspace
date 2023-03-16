@@ -1,2 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="cw_workspace" Database="" Version="10000"/>
+<CodeLite_Workspace Name="cw_workspace" Database="" Version="10000">
+  <Project Name="serial_implementation" Path="serial_implementation/serial_implementation.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug">
+      <Environment/>
+      <Project Name="serial_implementation" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release">
+      <Environment/>
+      <Project Name="serial_implementation" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
