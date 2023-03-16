@@ -80,14 +80,18 @@ public:
             
             double* dhdx = new double[Nx*Ny];
             double* dhdy = new double[Nx*Ny];
+            
+            double* yn = new double[3*Nx*Ny];
             // time propagation (for or while)
             for (double time = 0; time < T; time += dt) { //T and dt are double, so easier to make time double than try and cast them to int
                 
                 
                 
-                derXFor(u,dudx);
-                derYFor(u,dudy);
                 
+                calcF(yn,
+                    dudx,dudy,
+                    dvdx,dvdy,
+                    dhdx,dhdy);
             
                 // calculate k1, k2, k3, k4
                 
@@ -120,6 +124,79 @@ private:
     };
     double initialCond4(double x,double y) {
         return 10 + exp(-(x-25)*(x-25)/25) + exp(-(x-75)*(x-75)/25);
+    };
+    
+    void multVectByConst(const int& n,const double* vect1,const double& constVal,double* ans,const char& HOW) {
+        /*
+         HOW: 'A' : add to answer
+              'D' : replace answer (destroy previous values)
+          */
+        if (HOW == 'D') {
+            for (int i=0; i<n; i++) {
+                ans[i] = constVal*vect1[i];
+            }
+        } else if (HOW == 'A') {
+            for (int i=0; i<n; i++) {
+                ans[i] += constVal*vect1[i];
+            }
+        } else { //raiseAssertion
+            cout << "Error: option < " << HOW << "> not Implemented, only add or replace" << endl;
+        }
+    };
+    
+    void multVectByVect(const int& n,const double* vect1,const double* vect2,const double& sign,double* ans,const char& HOW) {
+        /*
+         HOW: 'A' : add to answer
+              'D' : replace answer (destroy previous values)
+          */
+        if (HOW == 'D') {
+            for (int i=0; i<n; i++) {
+                ans[i] = sign*vect1[i]*vect1[i];
+            }
+        } else if (HOW == 'A') {
+            for (int i=0; i<n; i++) {
+                ans[i] += sign*vect1[i]*vect1[i];
+            }
+        } else { //raiseAssertion
+            cout << "ERROR: Option < " << HOW << "> not Implemented, only add or replace" << endl;
+        }
+    };
+    
+    void calcF( double* yn,
+                double* dudx,double* dudy,
+                double* dvdx,double* dvdy,
+                double* dhdx,double* dhdy) {
+        
+        cblas_dcopy(Nx*Ny,yn,1,u,1);
+        cblas_dcopy(Nx*Ny,yn+Nx*Ny,1,v,1);
+        cblas_dcopy(Nx*Ny,yn+2*Nx*Ny,1,h,1);
+        
+        
+        
+        derXFor(u,dudx);
+        derYFor(u,dudy);
+        
+        derXFor(v,dvdx);
+        derYFor(v,dvdy);
+        
+        derXFor(h,dhdx);
+        derYFor(h,dhdy);
+        
+        //f1 = - (g*dhdx + u.*dudx) - (v.*dudy);
+        multVectByConst(Nx*Ny,dhdx,-9.81,yn,'D');
+        multVectByVect(Nx*Ny,dudx,u,-1,yn,'A');
+        multVectByVect(Nx*Ny,dudy,v,-1,yn,'A');
+        
+        //f2 = - (u.*dvdx) - (g*dhdy + v.*dvdy);
+        multVectByVect(Nx*Ny,u,dvdx,-1,yn+Nx*Ny,'D');
+        multVectByConst(Nx*Ny,dhdy,-9.81,yn+Nx*Ny,'A');
+        multVectByVect(Nx*Ny,v,dvdy,-1,yn+Nx*Ny,'A');
+        
+        //f3 = - (u.*dhdx + h.*dudx) - (v.*dhdy + h.*dvdy);
+        multVectByVect(Nx*Ny,u,dhdx,-1,yn+2*Nx*Ny,'D');
+        multVectByVect(Nx*Ny,h,dudx,-1,yn+2*Nx*Ny,'A');
+        multVectByVect(Nx*Ny,v,dhdy,-1,yn+2*Nx*Ny,'A');
+        multVectByVect(Nx*Ny,h,dvdy,-1,yn+2*Nx*Ny,'A');
     };
     
     void derXFor(double* data, double* derivative) {
