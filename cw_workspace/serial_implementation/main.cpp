@@ -3,6 +3,9 @@ using namespace std;
 #include <cmath>
 #include <cblas.h>
 
+#include <iomanip>
+#include <fstream>
+
 class ShallowWater {
 public:
         double dt;
@@ -10,6 +13,8 @@ public:
         int Nx;
         int Ny;
         int ic;
+        
+        double* yn;
         
         double* u;
         double* v;
@@ -26,6 +31,7 @@ public:
             Nx = Nx_in;
             Ny = Ny_in;
             ic = ic_in;
+            yn = new double[3*Nx*Ny];
             
             u = new double[Nx*Ny];
             v = new double[Nx*Ny];
@@ -81,7 +87,7 @@ public:
             double* dhdx = new double[Nx*Ny];
             double* dhdy = new double[Nx*Ny];
             
-            double* yn = new double[3*Nx*Ny];
+            
             
             double* temp = new double[3*Nx*Ny];
             double* allKs = new double[3*Nx*Ny];
@@ -452,9 +458,20 @@ int main(int argc, char **argv)
     // perform time integration
     myInstance.TimeIntegrate();
     
-    
-    
+    double dx = myInstance.dx;
     
     
     // output to file
+    ofstream vOut("output.txt", ios::out | ios::trunc);
+    vOut.precision(5);
+    for (int yInd = 0;yInd<Ny;yInd++) {
+        for (int xInd = 0;xInd<Nx;xInd++) {
+        vOut << xInd*dx << "\t"
+            << yInd*dx << "\t"
+            << myInstance.yn[yInd*Ny+xInd] << "\t"
+            << myInstance.yn[yInd*Ny+xInd + Nx*Ny] << "\t"
+            << myInstance.yn[yInd*Ny+xInd + 2*Nx*Ny] << "\t" << endl;
+        }
+    }
+    vOut.close();
 }
