@@ -69,8 +69,9 @@ public:
             
             
         };
+        
         void TimeIntegrate() {
-            cout << "TimeIntegrate" << endl;
+            cout << endl << "TimeIntegrate" << endl;
             double* dudx = new double[Nx*Ny];
             double* dudy = new double[Nx*Ny];
             
@@ -80,19 +81,19 @@ public:
             double* dhdx = new double[Nx*Ny];
             double* dhdy = new double[Nx*Ny];
             // time propagation (for or while)
-            cout << "before loop" << endl;
             for (double time = 0; time < T; time += dt) { //T and dt are double, so easier to make time double than try and cast them to int
-                //cout << "t: " << time << endl;
                 
-                cout << "before dudx" << endl;
+                
+                
                 derXFor(u,dudx);
                 derYFor(u,dudy);
-                cout << "after dudy" << endl;
+                
             
                 // calculate k1, k2, k3, k4
                 
                 //find yn+1
                 
+                cout << "Finished iteration " << time/dt << "/" << T/dt << endl;
                 //time += dt
             };
 
@@ -296,7 +297,7 @@ int main(int argc, char **argv)
     --ic arg    //Index of the initial condition to use (1-4)
     */
     double dt = 0.1;
-    double T = 0.2;
+    double T = 5;
     int Nx = 50;
     int Ny = 30;
     int ic = 1;
