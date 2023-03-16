@@ -82,45 +82,65 @@ public:
             double* dhdy = new double[Nx*Ny];
             
             double* yn = new double[3*Nx*Ny];
-            double* yn_temp = new double[3*Nx*Ny];
             
-            double* k_temp = new double[3*Nx*Ny];
+            double* temp = new double[3*Nx*Ny];
+            double* allKs = new double[3*Nx*Ny];
             // time propagation (for or while)
             for (double time = 0; time < T; time += dt) { //T and dt are double, so easier to make time double than try and cast them to int
                 
                 
+                //cblas_dcopy(3*Nx*Ny,yn,1,yn_temp,1);
                 
                 //k1 = calcF(yn)
-                k_temp = calcF(yn,
-                    dudx,dudy,
-                    dvdx,dvdy,
-                    dhdx,dhdy);
+                calcF(  yn,
+                        dudx,dudy,
+                        dvdx,dvdy,
+                        dhdx,dhdy,
+                        temp);
+                //multVectByConst(3*Nx*Ny,k_temp,1/6*dt,temp2,'R');
+                //addTwoVectors(3*Nx*Ny,yn,temp2,1,yn);
+                
+                cblas_dcopy(3*Nx*Ny,temp,1,allKs,1);
                 
                 //k2 = calcF(yn + dt*k1/2);
-                k2 = calcF(yn_temp,
-                    dudx,dudy,
-                    dvdx,dvdy,
-                    dhdx,dhdy);
+                multVectByConst(3*Nx*Ny,temp,dt/2,temp,'R');
+                addTwoVectors(3*Nx*Ny,yn,temp,1,temp);
+                calcF(  temp,
+                        dudx,dudy,
+                        dvdx,dvdy,
+                        dhdx,dhdy,
+                        temp);
+                addTwoVectors(3*Nx*Ny,allKs,temp,2,allKs);
                 
                 //k3 = calcF(yn + dt*k2/2);
-                k3 = calcF(yn_temp,
-                    dudx,dudy,
-                    dvdx,dvdy,
-                    dhdx,dhdy);
+                multVectByConst(3*Nx*Ny,temp,dt/2,temp,'R');
+                addTwoVectors(3*Nx*Ny,yn,temp,1,temp);
+                calcF(  temp,
+                        dudx,dudy,
+                        dvdx,dvdy,
+                        dhdx,dhdy,
+                        temp);
+                addTwoVectors(3*Nx*Ny,allKs,temp,2,allKs);
                 
                 //k4 = calcF(yn + dt*k3);
-                k4 = calcF(yn_temp,
-                    dudx,dudy,
-                    dvdx,dvdy,
-                    dhdx,dhdy);
+                multVectByConst(3*Nx*Ny,temp,dt,temp,'R');
+                addTwoVectors(3*Nx*Ny,yn,temp,1,temp);
+                calcF(  temp,
+                        dudx,dudy,
+                        dvdx,dvdy,
+                        dhdx,dhdy,
+                        temp);
+                addTwoVectors(3*Nx*Ny,allKs,temp,1,allKs);
                 
-            
+                
+                //yn = yn + (1/6) * (k1 + 2*k2 + 2*k3 + k4)*dt;
+                multVectByConst(3*Nx*Ny,allKs,dt/6,allKs,'R');
+                addTwoVectors(3*Nx*Ny,yn,allKs,1,yn);//inefficient, mult by zero inneccessary
                 
                 
-                //find yn+1
                 
                 cout << "Finished iteration " << time/dt << "/" << T/dt << endl;
-                //time += dt
+                
             };
 
             delete[] dudx;
@@ -131,6 +151,9 @@ public:
             
             delete[] dhdx;
             delete[] dhdy;
+            
+            delete[] allKs;
+            delete[] temp;
         };
         
 private:
@@ -166,6 +189,12 @@ private:
         }
     };
     
+    void addTwoVectors(const int& n,const double* vect1,const double* vect2,const double& sign,double* ans) {
+        for (int i = 0; i<n; i++) {
+            ans[i] = vect1[i] + sign * vect2[i];
+        }
+    };
+    
     void multVectByVect(const int& n,const double* vect1,const double* vect2,const double& sign,double* ans,const char& HOW) {
         /*
          HOW: 'A' : add to answer
@@ -197,35 +226,35 @@ private:
         
         //NEED TO CHANGE NAMES TO U_POS SO THEY DON'T OVERWRITE THE ATTRIBUTES
         //ENSURE WE ARE NOT OVERWRITING YN, WE NEED THIS INTACT FOR EACH K EVALUATION
-        double* u = yn;
-        double* v = yn+Nx*Ny;
-        double* h = yn+2*Nx*Ny;
+        double* u_pos = yn;
+        double* v_pos = yn+Nx*Ny;
+        double* h_pos = yn+2*Nx*Ny;
         
         
-        derXFor(u,dudx);
-        derYFor(u,dudy);
+        derXFor(u_pos,dudx);
+        derYFor(u_pos,dudy);
         
-        derXFor(v,dvdx);
-        derYFor(v,dvdy);
+        derXFor(v_pos,dvdx);
+        derYFor(v_pos,dvdy);
         
-        derXFor(h,dhdx);
-        derYFor(h,dhdy);
+        derXFor(h_pos,dhdx);
+        derYFor(h_pos,dhdy);
         
         //f1 = - (g*dhdx + u.*dudx) - (v.*dudy);
         multVectByConst(Nx*Ny,dhdx,-9.81,f,'R');
-        multVectByVect(Nx*Ny,dudx,u,-1,f,'A');
-        multVectByVect(Nx*Ny,dudy,v,-1,f,'A');
+        multVectByVect(Nx*Ny,dudx,u_pos,-1,f,'A');
+        multVectByVect(Nx*Ny,dudy,v_pos,-1,f,'A');
         
         //f2 = - (u.*dvdx) - (g*dhdy + v.*dvdy);
-        multVectByVect(Nx*Ny,u,dvdx,-1,f+Nx*Ny,'R');
+        multVectByVect(Nx*Ny,u_pos,dvdx,-1,f+Nx*Ny,'R');
         multVectByConst(Nx*Ny,dhdy,-9.81,f+Nx*Ny,'A');
-        multVectByVect(Nx*Ny,v,dvdy,-1,f+Nx*Ny,'A');
+        multVectByVect(Nx*Ny,v_pos,dvdy,-1,f+Nx*Ny,'A');
         
         //f3 = - (u.*dhdx + h.*dudx) - (v.*dhdy + h.*dvdy);
-        multVectByVect(Nx*Ny,u,dhdx,-1,yn+2*Nx*Ny,'R');
-        multVectByVect(Nx*Ny,h,dudx,-1,yn+2*Nx*Ny,'A');
-        multVectByVect(Nx*Ny,v,dhdy,-1,yn+2*Nx*Ny,'A');
-        multVectByVect(Nx*Ny,h,dvdy,-1,yn+2*Nx*Ny,'A');
+        multVectByVect(Nx*Ny,u_pos,dhdx,-1,f+2*Nx*Ny,'R');
+        multVectByVect(Nx*Ny,h_pos,dudx,-1,f+2*Nx*Ny,'A');
+        multVectByVect(Nx*Ny,v_pos,dhdy,-1,f+2*Nx*Ny,'A');
+        multVectByVect(Nx*Ny,h_pos,dvdy,-1,f+2*Nx*Ny,'A');
     };
     
     void derXFor(double* data, double* derivative) {
@@ -404,9 +433,9 @@ int main(int argc, char **argv)
     */
     double dt = 0.1;
     double T = 5;
-    int Nx = 50;
-    int Ny = 30;
-    int ic = 1;
+    int Nx = 100;
+    int Ny = 100;
+    int ic = 4;
     
     //Instantiate class and parameters via constructor
     ShallowWater myInstance(dt,T,Nx,Ny,ic);
