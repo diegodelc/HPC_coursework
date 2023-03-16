@@ -81,16 +81,19 @@ public:
             double* dhdy = new double[Nx*Ny];
             // time propagation (for or while)
             cout << "before loop" << endl;
-            for (int t = 0; t < T; t += dt) {
+            for (double time = 0; time < T; time += dt) { //T and dt are double, so easier to make time double than try and cast them to int
+                //cout << "t: " << time << endl;
                 
                 cout << "before dudx" << endl;
                 derXFor(u,dudx);
                 derYFor(u,dudy);
+                cout << "after dudy" << endl;
+            
                 // calculate k1, k2, k3, k4
                 
                 //find yn+1
                 
-                //t += dt
+                //time += dt
             };
 
             delete[] dudx;
