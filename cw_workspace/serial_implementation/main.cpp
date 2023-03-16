@@ -82,18 +82,40 @@ public:
             double* dhdy = new double[Nx*Ny];
             
             double* yn = new double[3*Nx*Ny];
+            double* yn_temp = new double[3*Nx*Ny];
+            
+            double* k_temp = new double[3*Nx*Ny];
             // time propagation (for or while)
             for (double time = 0; time < T; time += dt) { //T and dt are double, so easier to make time double than try and cast them to int
                 
                 
                 
-                
-                calcF(yn,
+                //k1 = calcF(yn)
+                k_temp = calcF(yn,
                     dudx,dudy,
                     dvdx,dvdy,
                     dhdx,dhdy);
+                
+                //k2 = calcF(yn + dt*k1/2);
+                k2 = calcF(yn_temp,
+                    dudx,dudy,
+                    dvdx,dvdy,
+                    dhdx,dhdy);
+                
+                //k3 = calcF(yn + dt*k2/2);
+                k3 = calcF(yn_temp,
+                    dudx,dudy,
+                    dvdx,dvdy,
+                    dhdx,dhdy);
+                
+                //k4 = calcF(yn + dt*k3);
+                k4 = calcF(yn_temp,
+                    dudx,dudy,
+                    dvdx,dvdy,
+                    dhdx,dhdy);
+                
             
-                // calculate k1, k2, k3, k4
+                
                 
                 //find yn+1
                 
@@ -129,9 +151,9 @@ private:
     void multVectByConst(const int& n,const double* vect1,const double& constVal,double* ans,const char& HOW) {
         /*
          HOW: 'A' : add to answer
-              'D' : replace answer (destroy previous values)
+              'R' : replace answer (destroy previous values)
           */
-        if (HOW == 'D') {
+        if (HOW == 'R') {
             for (int i=0; i<n; i++) {
                 ans[i] = constVal*vect1[i];
             }
@@ -140,16 +162,16 @@ private:
                 ans[i] += constVal*vect1[i];
             }
         } else { //raiseAssertion
-            cout << "Error: option < " << HOW << "> not Implemented, only add or replace" << endl;
+            cout << "Error: Option < " << HOW << "> not Implemented, only add (A) or replace (R)" << endl;
         }
     };
     
     void multVectByVect(const int& n,const double* vect1,const double* vect2,const double& sign,double* ans,const char& HOW) {
         /*
          HOW: 'A' : add to answer
-              'D' : replace answer (destroy previous values)
+              'R' : replace answer (destroy previous values)
           */
-        if (HOW == 'D') {
+        if (HOW == 'R') {
             for (int i=0; i<n; i++) {
                 ans[i] = sign*vect1[i]*vect1[i];
             }
@@ -158,19 +180,26 @@ private:
                 ans[i] += sign*vect1[i]*vect1[i];
             }
         } else { //raiseAssertion
-            cout << "ERROR: Option < " << HOW << "> not Implemented, only add or replace" << endl;
+            cout << "ERROR: Option < " << HOW << "> not Implemented, only add (A) or replace (R)" << endl;
         }
     };
     
     void calcF( double* yn,
                 double* dudx,double* dudy,
                 double* dvdx,double* dvdy,
-                double* dhdx,double* dhdy) {
+                double* dhdx,double* dhdy,
+                double* f) {
         
-        cblas_dcopy(Nx*Ny,yn,1,u,1);
-        cblas_dcopy(Nx*Ny,yn+Nx*Ny,1,v,1);
-        cblas_dcopy(Nx*Ny,yn+2*Nx*Ny,1,h,1);
+        //cblas_dcopy(Nx*Ny,yn,1,u,1);
+        //cblas_dcopy(Nx*Ny,yn+Nx*Ny,1,v,1);
+        //cblas_dcopy(Nx*Ny,yn+2*Nx*Ny,1,h,1);
         
+        
+        //NEED TO CHANGE NAMES TO U_POS SO THEY DON'T OVERWRITE THE ATTRIBUTES
+        //ENSURE WE ARE NOT OVERWRITING YN, WE NEED THIS INTACT FOR EACH K EVALUATION
+        double* u = yn;
+        double* v = yn+Nx*Ny;
+        double* h = yn+2*Nx*Ny;
         
         
         derXFor(u,dudx);
@@ -183,17 +212,17 @@ private:
         derYFor(h,dhdy);
         
         //f1 = - (g*dhdx + u.*dudx) - (v.*dudy);
-        multVectByConst(Nx*Ny,dhdx,-9.81,yn,'D');
-        multVectByVect(Nx*Ny,dudx,u,-1,yn,'A');
-        multVectByVect(Nx*Ny,dudy,v,-1,yn,'A');
+        multVectByConst(Nx*Ny,dhdx,-9.81,f,'R');
+        multVectByVect(Nx*Ny,dudx,u,-1,f,'A');
+        multVectByVect(Nx*Ny,dudy,v,-1,f,'A');
         
         //f2 = - (u.*dvdx) - (g*dhdy + v.*dvdy);
-        multVectByVect(Nx*Ny,u,dvdx,-1,yn+Nx*Ny,'D');
-        multVectByConst(Nx*Ny,dhdy,-9.81,yn+Nx*Ny,'A');
-        multVectByVect(Nx*Ny,v,dvdy,-1,yn+Nx*Ny,'A');
+        multVectByVect(Nx*Ny,u,dvdx,-1,f+Nx*Ny,'R');
+        multVectByConst(Nx*Ny,dhdy,-9.81,f+Nx*Ny,'A');
+        multVectByVect(Nx*Ny,v,dvdy,-1,f+Nx*Ny,'A');
         
         //f3 = - (u.*dhdx + h.*dudx) - (v.*dhdy + h.*dvdy);
-        multVectByVect(Nx*Ny,u,dhdx,-1,yn+2*Nx*Ny,'D');
+        multVectByVect(Nx*Ny,u,dhdx,-1,yn+2*Nx*Ny,'R');
         multVectByVect(Nx*Ny,h,dudx,-1,yn+2*Nx*Ny,'A');
         multVectByVect(Nx*Ny,v,dhdy,-1,yn+2*Nx*Ny,'A');
         multVectByVect(Nx*Ny,h,dvdy,-1,yn+2*Nx*Ny,'A');
