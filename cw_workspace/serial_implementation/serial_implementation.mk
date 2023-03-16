@@ -41,8 +41,8 @@ LinkOptions            :=
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := 
-ArLibs                 :=  
+Libs                   := $(LibrarySwitch)blas 
+ArLibs                 :=  "blas" 
 LibPath                := $(LibraryPathSwitch). 
 
 ##
