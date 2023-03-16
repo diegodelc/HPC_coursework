@@ -33,9 +33,9 @@ public:
             ic = ic_in;
             yn = new double[3*Nx*Ny];
             
-            u = new double[Nx*Ny];
-            v = new double[Nx*Ny];
-            h = new double[Nx*Ny];
+            //u = new double[Nx*Ny];
+            //v = new double[Nx*Ny];
+            //h = new double[Nx*Ny];
         };
         
         void SetInitialConditions() {
@@ -51,8 +51,8 @@ public:
             
             for (int x = 0;x<Nx; x++) {
                 for (int y = 0;y<Ny; y++) {
-                    u[x*Ny + y] = 0;
-                    v[x*Ny + y] = 0;
+                    yn[x*Ny + y] = 0; //u
+                    yn[Nx*Ny + x*Ny + y] = 0; //v
                 }
             }
             
@@ -62,16 +62,17 @@ public:
             for (int x = 0;x<Nx; x++) {
                 for (int y = 0;y<Ny; y++) {
                     if (ic == 1) {
-                        h[x*Ny + y] = initialCond1(x*dx,y*dx);
+                        yn[2*Nx*Ny + x*Ny + y] = initialCond1((double)x*dx,(double)y*dx);
                     } else if (ic == 2) {
-                        h[x*Ny + y] = initialCond2(x*dx,y*dx);
+                        yn[2*Nx*Ny + x*Ny + y] = initialCond2((double)x*dx,(double)y*dx);
                     } else if (ic == 3) {
-                        h[x*Ny + y] = initialCond3(x*dx,y*dx);
+                        yn[2*Nx*Ny + x*Ny + y] = initialCond3((double)x*dx,(double)y*dx);
                     } else if (ic == 4) {
-                        h[x*Ny + y] = initialCond4(x*dx,y*dx);
+                        yn[2*Nx*Ny + x*Ny + y] = initialCond4((double)x*dx,(double)y*dx);
                     }
                 }
             }
+            
             
             
         };
@@ -92,20 +93,18 @@ public:
             double* temp = new double[3*Nx*Ny];
             double* allKs = new double[3*Nx*Ny];
             // time propagation (for or while)
+            int counter = 0;
             for (double time = 0; time < T; time += dt) { //T and dt are double, so easier to make time double than try and cast them to int
                 
                 
-                //cblas_dcopy(3*Nx*Ny,yn,1,yn_temp,1);
+                
                 
                 //k1 = calcF(yn)
                 calcF(  yn,
                         dudx,dudy,
                         dvdx,dvdy,
                         dhdx,dhdy,
-                        temp);
-                //multVectByConst(3*Nx*Ny,k_temp,1/6*dt,temp2,'R');
-                //addTwoVectors(3*Nx*Ny,yn,temp2,1,yn);
-                
+                        temp);                
                 cblas_dcopy(3*Nx*Ny,temp,1,allKs,1);
                 
                 //k2 = calcF(yn + dt*k1/2);
@@ -146,6 +145,15 @@ public:
                 
                 
                 cout << "Finished iteration " << time/dt << "/" << T/dt << endl;
+                if (counter == 1) {
+                    for (int i=0;i<Nx*Ny;i++) {
+                        cout << dvdx[2*Nx*Ny + i] << endl;
+                    }
+                }
+                
+                counter++;
+                
+                
                 
             };
 
@@ -462,6 +470,8 @@ int main(int argc, char **argv)
     
     
     // output to file
+    cout << endl << "Writing output to file: ";
+    
     ofstream vOut("output.txt", ios::out | ios::trunc);
     vOut.precision(5);
     for (int yInd = 0;yInd<Ny;yInd++) {
@@ -474,4 +484,5 @@ int main(int argc, char **argv)
         }
     }
     vOut.close();
+    cout << "DONE" << endl;
 }
