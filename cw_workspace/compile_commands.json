@@ -1,5 +1,13 @@
 [{
+  "file": "/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/ShallowWater.cpp",
+  "directory": "/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation",
+  "command": "/usr/bin/g++ -c /home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/ShallowWater.cpp -o /home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/ShallowWater.cpp.o -target x86_64-linux-gnu -I/usr/include/c++/10 -I/usr/include/x86_64-linux-gnu/c++/10 -I/usr/include/c++/10/backward -I/usr/lib/gcc/x86_64-linux-gnu/10/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I.  -gdwarf-2  -O0  -Wall"
+ }, {
   "file": "/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/main.cpp",
   "directory": "/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation",
   "command": "/usr/bin/g++ -c /home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/main.cpp -o /home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/main.cpp.o -target x86_64-linux-gnu -I/usr/include/c++/10 -I/usr/include/x86_64-linux-gnu/c++/10 -I/usr/include/c++/10/backward -I/usr/lib/gcc/x86_64-linux-gnu/10/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I.  -gdwarf-2  -O0  -Wall"
+ }, {
+  "file": "/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/ShallowWater.h",
+  "directory": "/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation",
+  "command": "/usr/bin/g++ -c /home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/ShallowWater.h -o /home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/ShallowWater.h.o -target x86_64-linux-gnu -I/usr/include/c++/10 -I/usr/include/x86_64-linux-gnu/c++/10 -I/usr/include/c++/10/backward -I/usr/lib/gcc/x86_64-linux-gnu/10/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I.  -gdwarf-2  -O0  -Wall"
  }]

@@ -62,7 +62,7 @@ AS       := /usr/bin/as
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/ShallowWater.cpp$(ObjectSuffix) $(IntermediateDirectory)/main.cpp$(ObjectSuffix) 
 
 
 
@@ -93,6 +93,14 @@ PreBuild:
 ##
 ## Objects
 ##
+$(IntermediateDirectory)/ShallowWater.cpp$(ObjectSuffix): ShallowWater.cpp $(IntermediateDirectory)/ShallowWater.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/ShallowWater.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/ShallowWater.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/ShallowWater.cpp$(DependSuffix): ShallowWater.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/ShallowWater.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/ShallowWater.cpp$(DependSuffix) -MM ShallowWater.cpp
+
+$(IntermediateDirectory)/ShallowWater.cpp$(PreprocessSuffix): ShallowWater.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/ShallowWater.cpp$(PreprocessSuffix) ShallowWater.cpp
+
 $(IntermediateDirectory)/main.cpp$(ObjectSuffix): main.cpp $(IntermediateDirectory)/main.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/main.cpp$(DependSuffix): main.cpp
