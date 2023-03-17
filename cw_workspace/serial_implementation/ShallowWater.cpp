@@ -308,7 +308,7 @@ void ShallowWater::derXFor(double* data, double* derivative) {
         for (int xcol = 0; xcol < Nx; xcol++) {
             for (int yrow = 0; yrow < Ny; yrow++) {
                 if (3<=xcol && xcol<=Nx-4) {
-                    /*
+                    
                     tempDer[0] = data[(xcol-3)*Ny+yrow];
                     tempDer[1] = data[(xcol-2)*Ny+yrow];
                     tempDer[2] = data[(xcol-1)*Ny+yrow];
@@ -316,9 +316,9 @@ void ShallowWater::derXFor(double* data, double* derivative) {
                     tempDer[4] = data[(xcol+1)*Ny+yrow];
                     tempDer[5] = data[(xcol+2)*Ny+yrow];
                     tempDer[6] = data[(xcol+3)*Ny+yrow];
-                    */
                     
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,data + (xcol-3)*Ny+yrow,1);
+                    
+                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
                 } else if (xcol == 0) { //first column 
                     tempDer[0] = data[(Nx-3)*Ny+yrow];
                     tempDer[1] = data[(Nx-2)*Ny+yrow];
