@@ -261,7 +261,7 @@ private:
         return 10 + exp(-((x-50)*(x-50) + (y-50)*(y-50))/25);
     };
     double initialCond4(double x,double y) {
-        return 10 + exp(-(x-25)*(x-25)/25) + exp(-(x-75)*(x-75)/25);
+        return 10 + exp(-((x-25)*(x-25) + (y-25)*(y-25))/25) + exp(-((x-75)*(x-75)+ (y-75)*(y-75) )/25);
     };
     
     void multVectByConst(const int& n,double* vect1,const double& constVal,double* ans,const char& HOW) {
