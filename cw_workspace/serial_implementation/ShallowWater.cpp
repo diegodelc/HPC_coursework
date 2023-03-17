@@ -8,7 +8,7 @@ using namespace std;
 ShallowWater::ShallowWater(double dt_in,double T_in,
                             int Nx_in,int Ny_in,
                             int ic_in) {
-            cout << "SetParameters" << endl;
+            cout << "Setting parameters: ";
             dt = dt_in;
             T = T_in;
             Nx = Nx_in;
@@ -20,6 +20,7 @@ ShallowWater::ShallowWater(double dt_in,double T_in,
             //u = new double[Nx*Ny];
             //v = new double[Nx*Ny];
             //h = new double[Nx*Ny];
+            cout << "DONE" << endl;
         };
         
 void ShallowWater::SetInitialConditions() {
@@ -30,7 +31,7 @@ void ShallowWater::SetInitialConditions() {
                 h is initialised as one of four intial conditions, specified via the parameter 'ic'
             */
             
-            cout << "SetInitialConditions" << endl;
+            cout << "Setting initial conditions: ";
             
             
             for (int x = 0;x<Nx; x++) {
@@ -62,13 +63,13 @@ void ShallowWater::SetInitialConditions() {
                 }
                 //xdouble++;
             }
-            cout << endl;
-            
+            //cout << endl;
+            cout << "DONE" << endl;
             
         };
         
 void ShallowWater::TimeIntegrate() {
-            cout << endl << "TimeIntegrate" << endl;
+            cout << endl << "Starting time integration:" << endl;
             double* dudx = new double[Nx*Ny];
             double* dudy = new double[Nx*Ny];
             
@@ -83,25 +84,9 @@ void ShallowWater::TimeIntegrate() {
             double* temp = new double[3*Nx*Ny];
             double* allKs = new double[3*Nx*Ny];
             // time propagation (for or while)
-            int counter = 0;
+            //int counter = 0;
             for (double time = 0; time < T; time += dt) { //T and dt are double, so easier to make time double than try and cast them to int
-                
-                
-                
-                
-                
-                
-                
-                //k1 = calcF(yn)
-                calcF(  yn,
-                        dudx,dudy,
-                        dvdx,dvdy,
-                        dhdx,dhdy,
-                        temp);                
-                //cblas_dcopy(3*Nx*Ny,temp,1,allKs,1);
-                for (int i = 0;i<3*Nx*Ny;i++) {
-                    allKs[i] = temp[i];
-                }
+                //This is for debugging, it prints everything
                 /*
                 if (counter == 50) {
                     cout << setw(15) << "h";
@@ -137,11 +122,18 @@ void ShallowWater::TimeIntegrate() {
                     }
                 }
                 */
+                //k1 = calcF(yn)
+                calcF(  yn,
+                        dudx,dudy,
+                        dvdx,dvdy,
+                        dhdx,dhdy,
+                        temp);                
+                for (int i = 0;i<3*Nx*Ny;i++) {
+                    allKs[i] = temp[i];
+                }
                 
+
                 //k2 = calcF(yn + dt*k1/2);
-                //multVectByConst(3*Nx*Ny,temp,dt/2,temp,'R');
-                //addTwoVectors(3*Nx*Ny,yn,temp,1,temp);
-                
                 for (int i = 0;i<3*Nx*Ny;i++) {
                     temp[i] = yn[i] + (dt/2) * temp[i];
                 }
@@ -150,24 +142,15 @@ void ShallowWater::TimeIntegrate() {
                         dvdx,dvdy,
                         dhdx,dhdy,
                         temp);
-                
-                
-                
-                
-                //addTwoVectors(3*Nx*Ny,allKs,temp,2,allKs);
                 for (int i = 0;i<3*Nx*Ny;i++) {
                     allKs[i] += 2*temp[i];
                 }
                 
                 
                 //k3 = calcF(yn + dt*k2/2);
-                //multVectByConst(3*Nx*Ny,temp,dt/2,temp,'R');
-                //addTwoVectors(3*Nx*Ny,yn,temp,1,temp);
-                
                 for (int i = 0;i<3*Nx*Ny;i++) {
                     temp[i] = yn[i] + (dt/2)*temp[i];
                 }
-                
                 calcF(  temp,
                         dudx,dudy,
                         dvdx,dvdy,
@@ -175,49 +158,32 @@ void ShallowWater::TimeIntegrate() {
                         temp);
                         
                 
-                
-                //addTwoVectors(3*Nx*Ny,allKs,temp,2,allKs);
-                
                 for (int i = 0;i<3*Nx*Ny;i++) {
                     allKs[i] += 2*temp[i];
                 }
                 
                 //k4 = calcF(yn + dt*k3);
-                //multVectByConst(3*Nx*Ny,temp,dt,temp,'R');
-                //addTwoVectors(3*Nx*Ny,yn,temp,1,temp);
                 for (int i = 0;i<3*Nx*Ny;i++) {
                     temp[i] = yn[i] + dt*temp[i];
                 }
-                
-                
-                
-                
                 calcF(  temp,
                         dudx,dudy,
                         dvdx,dvdy,
                         dhdx,dhdy,
                         temp);
-                //addTwoVectors(3*Nx*Ny,allKs,temp,1,allKs);
+                
                 for (int i = 0;i<3*Nx*Ny;i++) {
                     allKs[i] += temp[i];
                 }
                 
                 //yn = yn + (1/6) * (k1 + 2*k2 + 2*k3 + k4)*dt;
-                //multVectByConst(3*Nx*Ny,allKs,dt/6,allKs,'R');
-                //addTwoVectors(3*Nx*Ny,yn,allKs,1,yn);//inefficient, mult by zero inneccessary
                 for (int i = 0;i<3*Nx*Ny;i++) {
                     yn[i] += (dt/6)*allKs[i];
-                }
-                
-                
-                cout << "Finished iteration " << time/dt << "/" << T/dt << endl;
-                
-                
-                counter++;
-                
-                
+                }                
                 
             };
+            
+            cout << "\tFinished iteration " << T/dt << "/" << T/dt << endl;
 
             delete[] dudx;
             delete[] dudy;
@@ -233,7 +199,7 @@ void ShallowWater::TimeIntegrate() {
         };
         
 
-    double stencil[7] = {-0.0167, 0.1500, -0.7500, 0, 0.7500, -0.1500, 0.0167};
+//double stencil[7]; //declared in ShallowWater.h
 double ShallowWater::initialCond1(double x,double y) {
         return 10 + exp(-(x-50)*(x-50)/25);
         //return 10 + exp(-(x-5)*(x-5)/2.5); //for a 10 by 10 grid
@@ -303,19 +269,19 @@ void ShallowWater::calcF( double* yn,
         
         //NEED TO CHANGE NAMES TO U_POS SO THEY DON'T OVERWRITE THE ATTRIBUTES
         //ENSURE WE ARE NOT OVERWRITING YN, WE NEED THIS INTACT FOR EACH K EVALUATION
-        double* u_pos = yn;
-        double* v_pos = yn+Nx*Ny;
-        double* h_pos = yn+2*Nx*Ny;
+        //double* u_pos = yn;
+        //double* v_pos = yn+Nx*Ny;
+        //double* h_pos = yn+2*Nx*Ny;
         
         
-        derXFor(u_pos,dudx);
-        derYFor(u_pos,dudy);
+        derXFor(yn,dudx);
+        derYFor(yn,dudy);
         
-        derXFor(v_pos,dvdx);
-        derYFor(v_pos,dvdy);
+        derXFor(yn+Nx*Ny,dvdx);
+        derYFor(yn+Nx*Ny,dvdy);
         
-        derXFor(h_pos,dhdx);
-        derYFor(h_pos,dhdy);
+        derXFor(yn+2*Nx*Ny,dhdx);
+        derYFor(yn+2*Nx*Ny,dhdy);
         
         //f1 = - (g*dhdx + u.*dudx) - (v.*dudy);
         for (int i = 0; i<Nx*Ny; i++) {

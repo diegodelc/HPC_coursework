@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     --ic arg    //Index of the initial condition to use (1-4)
     */
     double dt = 0.1;
-    double T = 10;
+    double T = 5;
     int Nx = 100;
     int Ny = 100;
     int ic = 4;

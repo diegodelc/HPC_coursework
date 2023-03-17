@@ -25,7 +25,7 @@ public:
         void TimeIntegrate();
         
 private:
-    double stencil[7] = {-0.0167, 0.1500, -0.7500, 0, 0.7500, -0.1500, 0.0167};
+    double stencil[7] = {-0.0167, 0.1500, -0.7500, 0, 0.7500, -0.1500, 0.0167}; //somehow declaring this here makes the code much faster
     double initialCond1(double x,double y);
     double initialCond2(double x,double y);
     double initialCond3(double x,double y);
