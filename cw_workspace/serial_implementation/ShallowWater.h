@@ -37,7 +37,7 @@ private:
     
     void multVectByVect(const int& n,double* vect1,double* vect2,const double& sign,double* ans,const char& HOW);
     
-    void calcF( double* yn,
+    void calcFFor( double* yn,
                 double* dudx,double* dudy,
                 double* dvdx,double* dvdy,
                 double* dhdx,double* dhdy,

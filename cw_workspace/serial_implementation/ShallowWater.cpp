@@ -123,7 +123,7 @@ void ShallowWater::TimeIntegrate() {
                 }
                 */
                 //k1 = calcF(yn)
-                calcF(  yn,
+                calcFFor(  yn,
                         dudx,dudy,
                         dvdx,dvdy,
                         dhdx,dhdy,
@@ -137,7 +137,7 @@ void ShallowWater::TimeIntegrate() {
                 for (int i = 0;i<3*Nx*Ny;i++) {
                     temp[i] = yn[i] + (dt/2) * temp[i];
                 }
-                calcF(  temp,
+                calcFFor(  temp,
                         dudx,dudy,
                         dvdx,dvdy,
                         dhdx,dhdy,
@@ -151,7 +151,7 @@ void ShallowWater::TimeIntegrate() {
                 for (int i = 0;i<3*Nx*Ny;i++) {
                     temp[i] = yn[i] + (dt/2)*temp[i];
                 }
-                calcF(  temp,
+                calcFFor(  temp,
                         dudx,dudy,
                         dvdx,dvdy,
                         dhdx,dhdy,
@@ -166,7 +166,7 @@ void ShallowWater::TimeIntegrate() {
                 for (int i = 0;i<3*Nx*Ny;i++) {
                     temp[i] = yn[i] + dt*temp[i];
                 }
-                calcF(  temp,
+                calcFFor(  temp,
                         dudx,dudy,
                         dvdx,dvdy,
                         dhdx,dhdy,
@@ -256,22 +256,13 @@ void ShallowWater::multVectByVect(const int& n,double* vect1,double* vect2,const
         }
     };
     
-void ShallowWater::calcF( double* yn,
+void ShallowWater::calcFFor( double* yn,
                 double* dudx,double* dudy,
                 double* dvdx,double* dvdy,
                 double* dhdx,double* dhdy,
                 double* f) {
         
-        //cblas_dcopy(Nx*Ny,yn,1,u,1);
-        //cblas_dcopy(Nx*Ny,yn+Nx*Ny,1,v,1);
-        //cblas_dcopy(Nx*Ny,yn+2*Nx*Ny,1,h,1);
         
-        
-        //NEED TO CHANGE NAMES TO U_POS SO THEY DON'T OVERWRITE THE ATTRIBUTES
-        //ENSURE WE ARE NOT OVERWRITING YN, WE NEED THIS INTACT FOR EACH K EVALUATION
-        //double* u_pos = yn;
-        //double* v_pos = yn+Nx*Ny;
-        //double* h_pos = yn+2*Nx*Ny;
         
         
         derXFor(yn,dudx);
@@ -317,6 +308,7 @@ void ShallowWater::derXFor(double* data, double* derivative) {
         for (int xcol = 0; xcol < Nx; xcol++) {
             for (int yrow = 0; yrow < Ny; yrow++) {
                 if (3<=xcol && xcol<=Nx-4) {
+                    /*
                     tempDer[0] = data[(xcol-3)*Ny+yrow];
                     tempDer[1] = data[(xcol-2)*Ny+yrow];
                     tempDer[2] = data[(xcol-1)*Ny+yrow];
@@ -324,9 +316,10 @@ void ShallowWater::derXFor(double* data, double* derivative) {
                     tempDer[4] = data[(xcol+1)*Ny+yrow];
                     tempDer[5] = data[(xcol+2)*Ny+yrow];
                     tempDer[6] = data[(xcol+3)*Ny+yrow];
+                    */
                     
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (xcol == 0) { //first column                    
+                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,data + (xcol-3)*Ny+yrow,1);
+                } else if (xcol == 0) { //first column 
                     tempDer[0] = data[(Nx-3)*Ny+yrow];
                     tempDer[1] = data[(Nx-2)*Ny+yrow];
                     tempDer[2] = data[(Nx-1)*Ny+yrow];
@@ -397,6 +390,7 @@ void ShallowWater::derYFor(double* data, double* derivative) {
         for (int xcol = 0; xcol < Nx; xcol++) {
             for (int yrow = 0; yrow < Ny; yrow++) {
                 if (3<=yrow && yrow<=Ny-4) {
+                    /*
                     tempDer[0] = data[xcol*Ny+yrow-3];
                     tempDer[1] = data[xcol*Ny+yrow-2];
                     tempDer[2] = data[xcol*Ny+yrow-1];
@@ -404,8 +398,8 @@ void ShallowWater::derYFor(double* data, double* derivative) {
                     tempDer[4] = data[xcol*Ny+yrow+1];
                     tempDer[5] = data[xcol*Ny+yrow+2];
                     tempDer[6] = data[xcol*Ny+yrow+3];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
+                    */
+                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,data + xcol*Ny+yrow-3,1);
                 } else if (yrow == 0) { //first row                    
                     tempDer[0] = data[xcol*Ny+Ny-3];
                     tempDer[1] = data[xcol*Ny+Ny-2];
