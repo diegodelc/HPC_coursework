@@ -2,6 +2,7 @@
 using namespace std;
 #include <cmath>
 #include <cblas.h>
+#include <iomanip>
 
 #include "ShallowWater.h"
 
@@ -197,11 +198,13 @@ void ShallowWater::TimeIntFor() {
     delete[] allKs;
     delete[] temp;
 };
-void ShallowWater::clacFBLAS(double* yn,
+void ShallowWater::calcFBLAS(double* yn,
                             double* dudx, double* dudy,
                             double* dvdx, double* dvdy,
                             double* dhdx, double* dhdy,
                             double* ddx,double* ddy,
+                            double* A, double* B,
+                            double* workspace,
                             double* F) {
     derXFor(yn,dudx);
     derYFor(yn,dudy);
@@ -231,7 +234,7 @@ void ShallowWater::clacFBLAS(double* yn,
     int kla = 2;
     int kua = 2;
     int lda = 1 + kla + kua;
-    double* A = new double[lda*Nx*Ny*3];
+    //double* A = new double[lda*Nx*Ny*3];
     
     for (int i = 0; i<Nx*Ny; i++) {
         //first column
@@ -260,7 +263,7 @@ void ShallowWater::clacFBLAS(double* yn,
     int klb = 1;
     int kub = 1;
     int ldb = 1 + klb + kub;
-    double* B = new double[ldb*Nx*Ny*3];
+    //double* B = new double[ldb*Nx*Ny*3];
     
     for (int i = 0; i<Nx*Ny; i++) {
         //first column
@@ -279,11 +282,25 @@ void ShallowWater::clacFBLAS(double* yn,
     }
     
     //solve system
-    cout << "Before first blas" << endl;
+    //cout << "Before first blas" << endl;
     cblas_dgbmv(CblasColMajor,CblasNoTrans,3*Nx*Ny,3*Nx*Ny,kla,kua,1,A,lda,ddx,1,0,F,1);
     
-    cout << "Before second blas" << endl;
+    //cout << "Before second blas" << endl;
     cblas_dgbmv(CblasColMajor,CblasNoTrans,3*Nx*Ny,3*Nx*Ny,klb,kub,1,B,ldb,ddy,1,1,F,1);
+    
+    //reshape F back to [u;v;h] shape
+    cblas_dcopy(3*Nx*Ny,F,1,workspace,1);
+    
+    for (int i = 0; i<Nx*Ny; i++) {
+        //u
+        F[i] = workspace[i*3];
+        
+        //v
+        F[Nx*Ny + i] = workspace[i*3 + 1];
+        
+        //h
+        F[2*Nx*Ny + i] = workspace[i*3 + 2];
+    }
 }
 void ShallowWater::TimeIntBlas() {
     //cout << "Starting BLAS time integration" << endl;
@@ -302,9 +319,121 @@ void ShallowWater::TimeIntBlas() {
     double* ddx = new double[3*Nx*Ny];
     double* ddy = new double[3*Nx*Ny];
     
-    double* F = new double[3*Nx*Ny];
     
+    double* temp = new double[3*Nx*Ny];
+    double* workspace = new double[3*Nx*Ny];
+    double* allKs = new double[3*Nx*Ny];
     
+    double* A = new double[5*3*Nx*Ny];
+    double* B = new double[3*3*Nx*Ny];
+    // time propagation (for or while)
+    int counter = 0;
+    for (double time = 0; time < T; time += dt) {
+        //k1 = calcF(yn)
+        if (counter == 15) {
+            cout << setw(15) << "h";
+            
+            cout << setw(15) << "temp";
+            
+            cout << setw(15) << "dudx";
+            cout << setw(15) << "dudy";
+            
+            cout << setw(15) << "dvdx";
+            cout << setw(15) << "dvdy";
+            
+            cout << setw(15) << "dhdx";
+            cout << setw(15) << "dhdy" << endl << endl;
+            
+            for (int i=0;i<Nx;i++) {
+                for (int j=0; j<Ny;j++) {
+                    cout << setw(15) << yn[2*Nx*Ny + i*Ny + j]; //h
+                    
+                    cout << setw(15) << temp[Nx*Ny + i*Ny + j];
+                    
+                    cout << setw(15) << dudx[i*Ny + j];
+                    cout << setw(15) << dudy[i*Ny + j];
+                    
+                    cout << setw(15) << dvdx[i*Ny + j];
+                    cout << setw(15) << dvdy[i*Ny + j];
+                    
+                    cout << setw(15) << dhdx[i*Ny + j];
+                    cout << setw(15) << dhdy[i*Ny + j] << endl;
+                    
+                
+                }
+            }
+        }
+        calcFBLAS(  yn,
+                    dudx, dudy,
+                    dvdx, dvdy,
+                    dhdx, dhdy,
+                    ddx, ddy,
+                    A, B,
+                    workspace,
+                    temp);            
+        for (int i = 0;i<3*Nx*Ny;i++) {
+            allKs[i] = temp[i];
+        }
+        
+        
+        //k2 = calcF(yn + dt*k1/2);
+        for (int i = 0;i<3*Nx*Ny;i++) {
+            temp[i] = yn[i] + (dt/2) * temp[i];
+        }
+        calcFBLAS(  yn,
+                    dudx, dudy,
+                    dvdx, dvdy,
+                    dhdx, dhdy,
+                    ddx, ddy,
+                    A, B,
+                    workspace,
+                    temp); 
+        for (int i = 0;i<3*Nx*Ny;i++) {
+            allKs[i] += 2*temp[i];
+        }
+        
+        
+        //k3 = calcF(yn + dt*k2/2);
+        for (int i = 0;i<3*Nx*Ny;i++) {
+            temp[i] = yn[i] + (dt/2)*temp[i];
+        }
+        calcFBLAS(  yn,
+                    dudx, dudy,
+                    dvdx, dvdy,
+                    dhdx, dhdy,
+                    ddx, ddy,
+                    A, B,
+                    workspace,
+                    temp); 
+                
+        
+        for (int i = 0;i<3*Nx*Ny;i++) {
+            allKs[i] += 2*temp[i];
+        }
+        
+        //k4 = calcF(yn + dt*k3);
+        for (int i = 0;i<3*Nx*Ny;i++) {
+            temp[i] = yn[i] + dt*temp[i];
+        }
+        calcFBLAS(  yn,
+                    dudx, dudy,
+                    dvdx, dvdy,
+                    dhdx, dhdy,
+                    ddx, ddy,
+                    A, B,
+                    workspace,
+                    temp); 
+        
+        for (int i = 0;i<3*Nx*Ny;i++) {
+            allKs[i] += temp[i];
+        }
+        
+        //yn = yn + (1/6) * (k1 + 2*k2 + 2*k3 + k4)*dt;
+        for (int i = 0;i<3*Nx*Ny;i++) {
+            yn[i] += (dt/6)*allKs[i];
+        }    
+        counter++;
+    }
     
     //delete allocations
     delete[] dudx;
@@ -316,9 +445,15 @@ void ShallowWater::TimeIntBlas() {
     delete[] dhdx;
     delete[] dhdy;
     
+    delete[] ddx;
+    delete[] ddy;
+    
+    delete[] temp;
+    delete[] workspace;
+    delete[] allKs;
+    
     delete[] A;
     delete[] B;
-    delete[] F;
 };
 
 void ShallowWater::TimeIntegrate() {
@@ -340,8 +475,8 @@ void ShallowWater::TimeIntegrate() {
 
 //double stencil[7]; //declared in ShallowWater.h
 double ShallowWater::initialCond1(double x,double y) {
-        return 10 + exp(-(x-50)*(x-50)/25);
-        //return 10 + exp(-(x-5)*(x-5)/2.5); //for a 10 by 10 grid
+        //return 10 + exp(-(x-50)*(x-50)/25);
+        return 10 + exp(-(x-5)*(x-5)/2.5); //for a 10 by 10 grid
     };
 double ShallowWater::initialCond2(double x,double y) {
         return 10 + exp(-(y-50)*(y-50)/25);

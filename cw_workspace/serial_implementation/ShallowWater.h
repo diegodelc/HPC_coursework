@@ -54,6 +54,14 @@ private:
     
     void TimeIntBlas();
 
+    void calcFBLAS(double* yn,
+                    double* dudx, double* dudy,
+                    double* dvdx, double* dvdy,
+                    double* dhdx, double* dhdy,
+                    double* ddx,double* ddy,
+                    double* A, double* B,
+                    double* workspace,
+                    double* F);
     
 
                     

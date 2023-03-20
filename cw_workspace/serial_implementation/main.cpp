@@ -21,9 +21,9 @@ int main(int argc, char **argv)
     */
     double dt = 0.1;
     double T = 5;
-    int Nx = 100;
-    int Ny = 100;
-    int ic = 4;
+    int Nx = 10;
+    int Ny = 10;
+    int ic = 1;
     
     //Instantiate class and parameters via constructor
     ShallowWater myInstance(dt,T,Nx,Ny,ic,2);
