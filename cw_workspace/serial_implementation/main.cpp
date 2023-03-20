@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     int ic = 4;
     
     //Instantiate class and parameters via constructor
-    ShallowWater myInstance(dt,T,Nx,Ny,ic);
+    ShallowWater myInstance(dt,T,Nx,Ny,ic,2);
     
     // Initialise simulation
     myInstance.SetInitialConditions();
