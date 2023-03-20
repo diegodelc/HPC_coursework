@@ -290,6 +290,7 @@ void ShallowWater::calcFBLAS(double* yn,
     //cout << "Before second blas" << endl;
     cblas_dgbmv(CblasColMajor,CblasNoTrans,3*Nx*Ny,3*Nx*Ny,klb,kub,1,B,ldb,ddy,1,1,F,1);
     
+    
     //reshape F back to [u;v;h] shape for output
     cblas_dcopy(3*Nx*Ny,F,1,workspace,1);
     
@@ -303,6 +304,7 @@ void ShallowWater::calcFBLAS(double* yn,
         //h
         F[2*Nx*Ny + i] = workspace[i*3 + 2];
     }
+    
 }
 void ShallowWater::TimeIntBlas() {
     //cout << "Starting BLAS time integration" << endl;
@@ -343,10 +345,12 @@ void ShallowWater::TimeIntBlas() {
                     A, B,
                     workspace,
                     temp);            
-        for (int i = 0;i<3*Nx*Ny;i++) {
-            allKs[i] = temp[i];
-        }
+        //for (int i = 0;i<3*Nx*Ny;i++) {
+        //    allKs[i] = temp[i];
+        //}
         
+        cblas_dcopy(3*Nx*Ny,temp,1,allKs,1);
+        /*
         if (counter == 10) {
             cout << setw(15) << "h";
             
@@ -388,12 +392,13 @@ void ShallowWater::TimeIntBlas() {
             
         }
         }
+        */
         
         //k2 = calcF(yn + dt*k1/2);
         for (int i = 0;i<3*Nx*Ny;i++) {
             temp[i] = yn[i] + (dt/2) * temp[i];
         }
-        calcFBLAS(  yn,
+        calcFBLAS(  temp,
                     dudx, dudy,
                     dvdx, dvdy,
                     dhdx, dhdy,
@@ -410,7 +415,7 @@ void ShallowWater::TimeIntBlas() {
         for (int i = 0;i<3*Nx*Ny;i++) {
             temp[i] = yn[i] + (dt/2)*temp[i];
         }
-        calcFBLAS(  yn,
+        calcFBLAS(  temp,
                     dudx, dudy,
                     dvdx, dvdy,
                     dhdx, dhdy,
@@ -428,7 +433,7 @@ void ShallowWater::TimeIntBlas() {
         for (int i = 0;i<3*Nx*Ny;i++) {
             temp[i] = yn[i] + dt*temp[i];
         }
-        calcFBLAS(  yn,
+        calcFBLAS(  temp,
                     dudx, dudy,
                     dvdx, dvdy,
                     dhdx, dhdy,
