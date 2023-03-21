@@ -20,13 +20,15 @@ int main(int argc, char **argv)
     --ic arg    //Index of the initial condition to use (1-4)
     */
     double dt = 0.1;
-    double T = 5;
+    double T = 20;
     int Nx = 100;
     int Ny = 100;
     int ic = 4;
     
     //Instantiate class and parameters via constructor
-    ShallowWater myInstance(dt,T,Nx,Ny,ic,2);
+    int whichIntegrationMethod = 2; // 1: For loop implementation,  2: BLAS implementation
+    
+    ShallowWater myInstance(dt,T,Nx,Ny,ic,whichIntegrationMethod);
     
     // Initialise simulation
     myInstance.SetInitialConditions();

@@ -452,6 +452,7 @@ void ShallowWater::TimeIntBlas() {
         }    
         counter++;
     }
+    cout << "\tFinished iteration " << T/dt << "/" << T/dt << endl;
     
     //delete allocations
     delete[] dudx;
