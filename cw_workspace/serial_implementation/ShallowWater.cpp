@@ -10,7 +10,7 @@ ShallowWater::ShallowWater(double dt_in,double T_in,
                             int Nx_in,int Ny_in,
                             int ic_in,
                             int integrationType_in) {
-            cout << "Setting parameters: ";
+            cout << endl << "Setting parameters: ";
             dt = dt_in;
             T = T_in;
             Nx = Nx_in;
@@ -34,7 +34,7 @@ void ShallowWater::SetInitialConditions() {
                 h is initialised as one of four intial conditions, specified via the parameter 'ic'
             */
             
-            cout << "Setting initial conditions: ";
+            cout << endl << "Setting initial conditions: ";
             
             
             for (int x = 0;x<Nx; x++) {
@@ -604,7 +604,7 @@ void ShallowWater::derXFor(double* data, double* derivative) {
                     derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
                     
                     
-                    //derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,data + (xcol-3)*Ny+yrow,1);
+                    
                 } else if (xcol == 0) { //first column 
                     tempDer[0] = data[(Nx-3)*Ny+yrow];
                     tempDer[1] = data[(Nx-2)*Ny+yrow];

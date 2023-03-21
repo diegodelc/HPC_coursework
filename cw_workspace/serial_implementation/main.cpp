@@ -69,12 +69,13 @@ int main(int argc, char **argv)
     
     int verb = vm["verb"].as<int>();
     if (verb == 1) {
+        cout << endl;
         cout << "Inputs chosen: " << endl;
         cout << "\tdt: " << dt << endl;
         cout << "\tT: " << T << endl;
         cout << "\tNx by Ny: " << Nx << " by " << Ny << endl;
         cout << "\tic: " << ic << endl;
-        cout << "\tintType: " << whichIntegrationMethod << endl << endl;
+        cout << "\tintType: " << whichIntegrationMethod << endl;
     }
     //Instantiate class and parameters via constructor
     ShallowWater myInstance(dt,T,Nx,Ny,ic,whichIntegrationMethod);
