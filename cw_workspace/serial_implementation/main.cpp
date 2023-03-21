@@ -24,11 +24,7 @@ int main(int argc, char **argv)
     --Ny arg    //Number of grid points in y
     --ic arg    //Index of the initial condition to use (1-4)
     */
-    //double dt = 0.1;
-    //double T = 20;
-    //int Nx = 100;
-    //int Ny = 100;
-    //int ic = 4;
+
     
         // Boost program options
     po::options_description opts("Allowed options");
@@ -38,8 +34,10 @@ int main(int argc, char **argv)
         ("T", po::value<double>()->default_value(5.0), "Total simulation time")
         ("Nx", po::value<int>()->default_value(100), "Number of grid points in x")
         ("Ny", po::value<int>()->default_value(100), "Number of grid points in y")
-        ("ic", po::value<int>()->default_value(4), "Initial conditions");
-        
+        ("ic", po::value<int>()->default_value(4), "Initial conditions")
+        //Not in assignement brief
+        ("intType", po::value<int>()->default_value(1), "1: For loop; 2: BLAS")
+        ("o", po::value<string>()->default_value("output.txt"), "1: For loop; 2: BLAS");
 
     // Default execution:
     //     ./main --dt 0.1 --T 5 --Nx 100 --Ny 100 --ic 4
@@ -49,7 +47,7 @@ int main(int argc, char **argv)
     po::notify(vm);
 
     if (vm.count("help")) {
-        std::cout << opts << "\n";
+        cout << opts << "\n";
         return 1;
     }
 
@@ -62,7 +60,7 @@ int main(int argc, char **argv)
     
     
     //Instantiate class and parameters via constructor
-    int whichIntegrationMethod = 1; // 1: For loop implementation,  2: BLAS implementation
+    int whichIntegrationMethod = vm["intType"].as<int>(); // 1: For loop implementation,  2: BLAS implementation
     
     ShallowWater myInstance(dt,T,Nx,Ny,ic,whichIntegrationMethod);
     
@@ -75,8 +73,8 @@ int main(int argc, char **argv)
     
     // output to file
     cout << endl << "Writing output to file: ";
-    
-    ofstream vOut("output.txt", ios::out | ios::trunc);
+    string filename = vm["o"].as<std::string>();
+    ofstream vOut(filename, ios::out | ios::trunc);
     vOut.precision(5);
     for (int yInd = 0;yInd<Ny;yInd++) {
         for (int xInd = 0;xInd<Nx;xInd++) {
