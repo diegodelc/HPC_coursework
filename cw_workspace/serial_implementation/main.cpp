@@ -21,8 +21,8 @@ int main(int argc, char **argv)
     */
     double dt = 0.1;
     double T = 20;
-    int Nx = 300;
-    int Ny = 300;
+    int Nx = 100;
+    int Ny = 100;
     int ic = 4;
     
     //Instantiate class and parameters via constructor
