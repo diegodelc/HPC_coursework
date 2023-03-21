@@ -30,6 +30,7 @@ int main(int argc, char **argv)
     int Nx = 100;
     int Ny = 100;
     int ic = 4;
+    int whichIntegrationMethod = 1;
     */
     
         // Boost program options
@@ -43,8 +44,8 @@ int main(int argc, char **argv)
         ("ic", po::value<int>()->default_value(4), "Initial conditions")
         //Not in assignement brief
         ("intType", po::value<int>()->default_value(1), "1: For loop; 2: BLAS")
-        ("o", po::value<string>()->default_value("output.txt"), "Name of output file");
-
+        ("o", po::value<string>()->default_value("output.txt"), "Name of output file")
+        ("verb", po::value<int>()->default_value(0), "Amount of information printed");
     // Default execution:
     //     ./main --dt 0.1 --T 5 --Nx 100 --Ny 100 --ic 4
 
@@ -58,18 +59,24 @@ int main(int argc, char **argv)
     }
 
     // Loading parameters into memory
-    double dt     = vm["dt"].as<double>();
-    double T     = vm["T"].as<double>();
-    int Nx     = vm["Nx"].as<int>();
-    int Ny     = vm["Ny"].as<int>();
-    int ic     = vm["ic"].as<int>();
-    
-    
-    //Instantiate class and parameters via constructor
+    double dt       = vm["dt"].as<double>();
+    double T        = vm["T"].as<double>();
+    int Nx          = vm["Nx"].as<int>();
+    int Ny          = vm["Ny"].as<int>();
+    int ic          = vm["ic"].as<int>();
     int whichIntegrationMethod = vm["intType"].as<int>(); // 1: For loop implementation,  2: BLAS implementation
     
     
-    //int whichIntegrationMethod = 1;
+    int verb = vm["verb"].as<int>();
+    if (verb == 1) {
+        cout << "Inputs chosen: " << endl;
+        cout << "\tdt: " << dt << endl;
+        cout << "\tT: " << T << endl;
+        cout << "\tNx by Ny: " << Nx << " by " << Ny << endl;
+        cout << "\tic: " << ic << endl;
+        cout << "\tintType: " << whichIntegrationMethod << endl << endl;
+    }
+    //Instantiate class and parameters via constructor
     ShallowWater myInstance(dt,T,Nx,Ny,ic,whichIntegrationMethod);
     
     // Initialise simulation

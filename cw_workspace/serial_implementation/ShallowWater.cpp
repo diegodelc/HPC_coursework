@@ -23,6 +23,7 @@ ShallowWater::ShallowWater(double dt_in,double T_in,
             //v = new double[Nx*Ny];
             //h = new double[Nx*Ny];
             cout << "DONE" << endl;
+            
         };
         
 void ShallowWater::SetInitialConditions() {
