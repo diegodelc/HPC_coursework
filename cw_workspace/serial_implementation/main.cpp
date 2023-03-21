@@ -21,12 +21,12 @@ int main(int argc, char **argv)
     */
     double dt = 0.1;
     double T = 20;
-    int Nx = 100;
-    int Ny = 100;
+    int Nx = 300;
+    int Ny = 300;
     int ic = 4;
     
     //Instantiate class and parameters via constructor
-    int whichIntegrationMethod = 2; // 1: For loop implementation,  2: BLAS implementation
+    int whichIntegrationMethod = 1; // 1: For loop implementation,  2: BLAS implementation
     
     ShallowWater myInstance(dt,T,Nx,Ny,ic,whichIntegrationMethod);
     
