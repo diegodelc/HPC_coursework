@@ -37,7 +37,7 @@ int main(int argc, char **argv)
         ("ic", po::value<int>()->default_value(4), "Initial conditions")
         //Not in assignement brief
         ("intType", po::value<int>()->default_value(1), "1: For loop; 2: BLAS")
-        ("o", po::value<string>()->default_value("output.txt"), "1: For loop; 2: BLAS");
+        ("o", po::value<string>()->default_value("output.txt"), "Name of output file");
 
     // Default execution:
     //     ./main --dt 0.1 --T 5 --Nx 100 --Ny 100 --ic 4

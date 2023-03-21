@@ -1,0 +1,17 @@
+### Start Tue Mar 21 17:18:04 2023
+# /apps/dev-studio/12.6/bin/../bin/er_archive -n -O /home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/er_archive.log /home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er
+Copying `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/main'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32'
+Copying `/usr/lib/x86_64-linux-gnu/libquadmath.so.0.0.0'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libquadmath.so.0.0.0_dnWuQRcLhw9'
+Copying `/usr/lib/x86_64-linux-gnu/libgfortran.so.5.0.0'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libgfortran.so.5.0.0_dnWuQRcLhw9'
+Copying `/usr/lib/x86_64-linux-gnu/libatlas.so.3.10.3'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libatlas.so.3.10.3_dnWuQRcLhw9'
+Copying `/lib/x86_64-linux-gnu/librt-2.31.so'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/librt-2.31.so_XLwlkF_Wwof'
+Copying `/lib/x86_64-linux-gnu/libpthread-2.31.so'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libpthread-2.31.so_XLwlkF_Wwof'
+Copying `/lib/x86_64-linux-gnu/libdl-2.31.so'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libdl-2.31.so_XLwlkF_Wwof'
+Copying `/lib/x86_64-linux-gnu/libc-2.31.so'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libc-2.31.so_XLwlkF_Wwof'
+Copying `/lib/x86_64-linux-gnu/libgcc_s.so.1'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libgcc_s.so.1_XLwlkF_Wwof'
+Copying `/lib/x86_64-linux-gnu/libm-2.31.so'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libm-2.31.so_XLwlkF_Wwof'
+Copying `/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libstdc++.so.6.0.28_dnWuQRcLhw9'
+Copying `/usr/lib/x86_64-linux-gnu/libboost_program_options.so.1.74.0'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libboost_program_options.so.1.74.0_dnWuQRcLhw9'
+Copying `/usr/lib/x86_64-linux-gnu/atlas/libblas.so.3.10.3'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libblas.so.3.10.3_IiHvjNbM48a'
+Copying `/apps/dev-studio/12.6/lib/analyzer/amd64/runtime/libcollector.so'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libcollector.so_kN_xj2QRtH5'
+Copying `/lib/x86_64-linux-gnu/ld-2.31.so'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/ld-2.31.so_XLwlkF_Wwof'
