@@ -6,13 +6,13 @@ using namespace std;
 #include <iomanip>
 #include <fstream>
 
-//#include <boost/program_options.hpp>
-//#include <boost/timer/timer.hpp>
-//#include <omp.h>
+#include <boost/program_options.hpp>
+#include <boost/timer/timer.hpp>
+#include <omp.h>
 
 #include "ShallowWater.h"
 
-//namespace po = boost::program_options;
+namespace po = boost::program_options;
 
 int main(int argc, char **argv)
 {
@@ -24,20 +24,20 @@ int main(int argc, char **argv)
     --Ny arg    //Number of grid points in y
     --ic arg    //Index of the initial condition to use (1-4)
     */
-    
+    /*
     double dt = 0.1;
     double T = 5;
     int Nx = 100;
     int Ny = 100;
     int ic = 4;
-    /*
+    */
     
         // Boost program options
     po::options_description opts("Allowed options");
     opts.add_options()
         ("help", "Prints list of options")
         ("dt", po::value<double>()->default_value(0.1), "Time step")
-        ("T", po::value<double>()->default_value(5), "Total simulation time")
+        ("T", po::value<double>()->default_value(5.0), "Total simulation time")
         ("Nx", po::value<int>()->default_value(100), "Number of grid points in x")
         ("Ny", po::value<int>()->default_value(100), "Number of grid points in y")
         ("ic", po::value<int>()->default_value(4), "Initial conditions")
@@ -67,9 +67,9 @@ int main(int argc, char **argv)
     
     //Instantiate class and parameters via constructor
     int whichIntegrationMethod = vm["intType"].as<int>(); // 1: For loop implementation,  2: BLAS implementation
-    */
     
-    int whichIntegrationMethod = 1;
+    
+    //int whichIntegrationMethod = 1;
     ShallowWater myInstance(dt,T,Nx,Ny,ic,whichIntegrationMethod);
     
     // Initialise simulation
@@ -81,8 +81,8 @@ int main(int argc, char **argv)
     
     // output to file
     cout << endl << "Writing output to file: ";
-    //string filename = vm["o"].as<std::string>();
-    string filename = "output.txt";
+    string filename = vm["o"].as<std::string>();
+    //string filename = "output.txt";
     ofstream vOut(filename, ios::out | ios::trunc);
     vOut.precision(5);
     for (int yInd = 0;yInd<Ny;yInd++) {
