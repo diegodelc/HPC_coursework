@@ -105,5 +105,17 @@ int main(int argc, char **argv)
     vOut.close();
     cout << "DONE" << endl;
     
+    cout << endl;
+    cout << "Probed values:" << endl;
+    cout.precision(17);
+    int xprobe = 25;
+    int yprobe = 25;
+    cout << "\t(" << xprobe << "," << yprobe << "): " << fixed << myInstance.yn[yprobe*Ny+xprobe + 2*Nx*Ny] << endl;
+    
+    xprobe = 45;
+    yprobe = 55;
+    cout << "\t(" << xprobe << "," << yprobe << "): " << fixed << myInstance.yn[yprobe*Ny+xprobe + 2*Nx*Ny] << endl;
+    
+    
     return 0;
 }
