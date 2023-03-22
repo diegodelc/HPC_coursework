@@ -210,9 +210,8 @@ void ShallowWater::calcFBLAS( double* yn,
                             double* derXMat, double* derYMat,
                             double* vect,double* ans) {
     derXBlas(yn,dudx,derXMat,vect,ans);
-    cout << "before y derivative" << endl;
     derYBlas(yn,dudy,derYMat,vect,ans);
-    cout << "after y derivative" << endl;
+    
     
     derXBlas(yn+Nx*Ny,dvdx,derXMat,vect,ans);
     derYBlas(yn+Nx*Ny,dvdy,derYMat,vect,ans);
