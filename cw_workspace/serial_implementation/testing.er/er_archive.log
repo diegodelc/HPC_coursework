@@ -1,4 +1,4 @@
-### Start Wed Mar 22 12:54:23 2023
+### Start Wed Mar 22 14:46:39 2023
 # /apps/dev-studio/12.6/bin/../bin/er_archive -n -O /home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/er_archive.log /home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er
 Copying `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/main'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32'
 Copying `/usr/lib/x86_64-linux-gnu/libquadmath.so.0.0.0'  to `/home/dd519/Desktop/hpc_cw_final/HPC_coursework/cw_workspace/serial_implementation/testing.er/archives/libquadmath.so.0.0.0_dnWuQRcLhw9'

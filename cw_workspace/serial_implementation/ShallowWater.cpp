@@ -199,22 +199,26 @@ void ShallowWater::TimeIntFor() {
     delete[] allKs;
     delete[] temp;
 };
-void ShallowWater::calcFBLAS(double* yn,
+void ShallowWater::calcFBLAS( double* yn,
                             double* dudx, double* dudy,
                             double* dvdx, double* dvdy,
                             double* dhdx, double* dhdy,
                             double* ddx,double* ddy,
                             double* A, double* B,
                             double* workspace,
-                            double* F) {
-    derXFor(yn,dudx);
-    derYFor(yn,dudy);
+                            double* F,
+                            double* derXMat, double* derYMat,
+                            double* vect,double* ans) {
+    derXBlas(yn,dudx,derXMat,vect,ans);
+    cout << "before y derivative" << endl;
+    derYBlas(yn,dudy,derYMat,vect,ans);
+    cout << "after y derivative" << endl;
     
-    derXFor(yn+Nx*Ny,dvdx);
-    derYFor(yn+Nx*Ny,dvdy);
+    derXBlas(yn+Nx*Ny,dvdx,derXMat,vect,ans);
+    derYBlas(yn+Nx*Ny,dvdy,derYMat,vect,ans);
     
-    derXFor(yn+2*Nx*Ny,dhdx);
-    derYFor(yn+2*Nx*Ny,dhdy);
+    derXBlas(yn+2*Nx*Ny,dhdx,derXMat,vect,ans);
+    derYBlas(yn+2*Nx*Ny,dhdy,derYMat,vect,ans);
     
     
     
@@ -307,6 +311,85 @@ void ShallowWater::calcFBLAS(double* yn,
     }
     
 }
+
+void ShallowWater::derXBlas(double* data, double* derivative, double* derMat,double* vect, double* ans) {
+    //NOTE: data comes in column major
+    
+    
+    //these are being declared a second time, find a better way (maybe make them attributes?)
+    int paddedLen = Nx+6;
+    int kl = 3;
+    int ku = 3;
+    int lda = 1 + kl + ku;
+    
+    for (int yrow = 0; yrow<Ny; yrow++) {
+        //first three (padding)
+        vect[0] = data[(Ny-3)*Ny + yrow];//pad with third to last
+        vect[1] = data[(Ny-2)*Ny + yrow];//pad with second to last
+        vect[2] = data[(Ny-1)*Ny + yrow];//pad with last
+        
+        //last three (padding)
+        vect[paddedLen-3] = data[(0)*Ny + yrow]; //pad with first
+        vect[paddedLen-2] = data[(1)*Ny + yrow]; //pad with 2nd
+        vect[paddedLen-1] = data[(2)*Ny + yrow]; //pad with 3rd
+        
+        //populate rest of vector
+        for (int xcol = 0; xcol<Nx;xcol++) {
+            vect[3+xcol] = data[(xcol)*Ny + yrow];
+        }
+        
+        //blas operation 
+        cblas_dgbmv(CblasColMajor,CblasNoTrans,paddedLen,paddedLen,kl,ku,1,derMat,lda,vect,1,0,ans,1);
+        
+        //map results to derivatives array (output)
+        for (int xcol = 0; xcol<Nx; xcol++) {
+            derivative[xcol*Ny+yrow] = ans[3+xcol];
+        }
+        
+        
+    }
+    
+}
+void ShallowWater::derYBlas(double* data, double* derivative, double* derMat,double* vect, double* ans) {
+    //NOTE: data comes in column major
+    
+    
+    //these are being declared a second time, find a better way (maybe make them attributes?)
+    int paddedLen = Ny+6;
+    int kl = 3;
+    int ku = 3;
+    int lda = 1 + kl + ku;
+    
+    for (int xcol = 0; xcol<Nx; xcol++) {
+        
+        //first three (padding)
+        vect[0] = data[(xcol)*Ny + Ny-1 -2];//pad with third to last
+        vect[1] = data[(xcol)*Ny + Ny-1 -1];//pad with second to last
+        vect[2] = data[(xcol)*Ny + Ny-1];//pad with last
+        
+        //last three (padding)
+        vect[paddedLen-3] = data[(xcol)*Ny]; //pad with first
+        vect[paddedLen-2] = data[(xcol)*Ny + 1]; //pad with 2nd
+        vect[paddedLen-1] = data[(xcol)*Ny + 2]; //pad with 3rd
+        
+        //populate rest of vector
+        for (int yrow = 0; yrow<Ny;yrow++) {
+            vect[3+yrow] = data[(xcol)*Ny + yrow];
+        }
+        
+        //blas operation 
+        cblas_dgbmv(CblasColMajor,CblasNoTrans,paddedLen,paddedLen,kl,ku,1,derMat,lda,vect,1,0,ans,1);
+        
+        //map results to derivatives array (output)
+        for (int yrow = 0; yrow<Ny; yrow++) {
+            derivative[xcol*Ny+yrow] = ans[3+yrow];
+        }
+        
+        
+    }
+    
+}
+
 void ShallowWater::TimeIntBlas() {
     //cout << "Starting BLAS time integration" << endl;
     
@@ -331,6 +414,49 @@ void ShallowWater::TimeIntBlas() {
     
     double* A = new double[5*3*Nx*Ny];
     double* B = new double[3*3*Nx*Ny];
+    
+    
+    
+    
+    //these need to be large enough for both the X and Y derivative
+    int paddedLen;
+    
+    if (Ny>Nx) {
+        paddedLen = Ny+6;
+    } else {
+        paddedLen = Nx+6;
+    }
+    double* vect = new double[paddedLen];
+    double* ans = new double[paddedLen];
+    //creating differentiation matrix for both X and Y
+    int kl = 3;
+    int ku = 3;
+    int lda = 1 + ku + kl;
+    
+    int paddedLenX = Nx + 6;
+    double* derXMat = new double[lda*paddedLenX]; //dimensions corresponding to largest grid dimension
+    for (int i = 0; i<paddedLenX;i++) {
+        derXMat[i*lda]   = -0.0167;     //c7
+        derXMat[i*lda+1] =  0.1500;     //c6
+        derXMat[i*lda+2] = -0.7500;     //c5
+        derXMat[i*lda+3] =  0;          //c4
+        derXMat[i*lda+4] =  0.7500;     //c3
+        derXMat[i*lda+5] = -0.1500;     //c2
+        derXMat[i*lda+6] =  0.0167;     //c1
+    }
+    
+    int paddedLenY = Ny + 6;
+    double* derYMat = new double[lda*paddedLenY]; //dimensions corresponding to largest grid dimension
+    for (int i = 0; i<paddedLenY;i++) {
+        derYMat[i*lda]   = -0.0167;     //c7
+        derYMat[i*lda+1] =  0.1500;     //c6
+        derYMat[i*lda+2] = -0.7500;     //c5
+        derYMat[i*lda+3] =  0;          //c4
+        derYMat[i*lda+4] =  0.7500;     //c3
+        derYMat[i*lda+5] = -0.1500;     //c2
+        derYMat[i*lda+6] =  0.0167;     //c1
+    }
+    
     // time propagation (for or while)
     int counter = 0;
     for (double time = 0; time < T; time += dt) {
@@ -345,7 +471,9 @@ void ShallowWater::TimeIntBlas() {
                     ddx, ddy,
                     A, B,
                     workspace,
-                    temp);            
+                    temp,
+                    derXMat,derYMat,
+                    vect,ans);           
         //for (int i = 0;i<3*Nx*Ny;i++) {
         //    allKs[i] = temp[i];
         //}
@@ -406,7 +534,9 @@ void ShallowWater::TimeIntBlas() {
                     ddx, ddy,
                     A, B,
                     workspace,
-                    temp); 
+                    temp,
+                    derXMat,derYMat,
+                    vect,ans); 
         for (int i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += 2*temp[i];
         }
@@ -423,7 +553,9 @@ void ShallowWater::TimeIntBlas() {
                     ddx, ddy,
                     A, B,
                     workspace,
-                    temp); 
+                    temp,
+                    derXMat,derYMat,
+                    vect,ans);  
                 
         
         for (int i = 0;i<3*Nx*Ny;i++) {
@@ -441,7 +573,9 @@ void ShallowWater::TimeIntBlas() {
                     ddx, ddy,
                     A, B,
                     workspace,
-                    temp); 
+                    temp,
+                    derXMat,derYMat,
+                    vect,ans); 
         
         for (int i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += temp[i];
@@ -474,6 +608,12 @@ void ShallowWater::TimeIntBlas() {
     
     delete[] A;
     delete[] B;
+    
+    delete[] vect;
+    delete[] ans;
+    
+    delete[] derXMat;
+    delete[] derYMat;
 };
 
 void ShallowWater::TimeIntegrate() {
@@ -587,12 +727,12 @@ void ShallowWater::calcFFor( double* yn,
         
     };
     
-void ShallowWater::derXFor(double* data, double* derivative) {
+void ShallowWater::derXFor(const double* data, double* derivative) {
         double* tempDer = new double[7];
         for (int xcol = 0; xcol < Nx; xcol++) {
             for (int yrow = 0; yrow < Ny; yrow++) {
                 if (3<=xcol && xcol<=Nx-4) {
-                    /*
+                    
                     tempDer[0] = data[(xcol-3)*Ny+yrow];
                     tempDer[1] = data[(xcol-2)*Ny+yrow];
                     tempDer[2] = data[(xcol-1)*Ny+yrow];
@@ -602,9 +742,9 @@ void ShallowWater::derXFor(double* data, double* derivative) {
                     tempDer[6] = data[(xcol+3)*Ny+yrow];
                     
                     derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                    */
                     
-                    derivative[xcol*Ny+yrow] = data[(xcol-3)*Ny+yrow]*-0.0167 + data[(xcol-2)*Ny+yrow]*0.1500 + data[(xcol-1)*Ny+yrow]*-0.7500 + data[(xcol+1)*Ny+yrow]*0.7500 + data[(xcol+2)*Ny+yrow]*-0.1500 + data[(xcol+3)*Ny+yrow]*0.0167;
+                    
+                    //derivative[xcol*Ny+yrow] = data[(xcol-3)*Ny+yrow]*-0.0167 + data[(xcol-2)*Ny+yrow]*0.1500 + data[(xcol-1)*Ny+yrow]*-0.7500 + data[(xcol+1)*Ny+yrow]*0.7500 + data[(xcol+2)*Ny+yrow]*-0.1500 + data[(xcol+3)*Ny+yrow]*0.0167;
                     
                 } else if (xcol == 0) { //first column 
                     
@@ -678,12 +818,12 @@ void ShallowWater::derXFor(double* data, double* derivative) {
         }
         delete[] tempDer;
     };
-void ShallowWater::derYFor(double* data, double* derivative) {
+void ShallowWater::derYFor(const double* data, double* derivative) {
         double* tempDer = new double[7];
         for (int xcol = 0; xcol < Nx; xcol++) {
             for (int yrow = 0; yrow < Ny; yrow++) {
                 if (3<=yrow && yrow<=Ny-4) {
-                    /*
+                    ///*
                     tempDer[0] = data[xcol*Ny+yrow-3];
                     tempDer[1] = data[xcol*Ny+yrow-2];
                     tempDer[2] = data[xcol*Ny+yrow-1];
@@ -693,13 +833,14 @@ void ShallowWater::derYFor(double* data, double* derivative) {
                     tempDer[6] = data[xcol*Ny+yrow+3];
                     
                     derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,data + xcol*Ny+yrow-3,1);
-                    */
+                    //*/
                     
                     
                     
                     //-0.0167, 0.1500, -0.7500, 0, 0.7500, -0.1500, 0.0167
                     
-                    derivative[xcol*Ny+yrow] = data[xcol*Ny+yrow-3]*-0.0167 + data[xcol*Ny+yrow-2]*0.15 + data[xcol*Ny+yrow-1]*-0.75 + data[xcol*Ny+yrow+1]*0.75 + data[xcol*Ny+yrow+2]*-0.015 + data[xcol*Ny+yrow+3]*0.0167;
+                    //derivative[xcol*Ny+yrow] = -data[xcol*Ny+yrow-3]*0.0167 + data[xcol*Ny+yrow-2]*0.15 - data[xcol*Ny+yrow-1]*0.75 + data[xcol*Ny+yrow+1]*0.75 - data[xcol*Ny+yrow+2]*0.015 + data[xcol*Ny+yrow+3]*0.0167;
+                    
                 } else if (yrow == 0) { //first row                    
                     tempDer[0] = data[xcol*Ny+Ny-3];
                     tempDer[1] = data[xcol*Ny+Ny-2];

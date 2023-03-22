@@ -46,9 +46,9 @@ private:
                 double* dhdx,double* dhdy,
                 double* f);
     
-    void derXFor(double* data, double* derivative);
+    void derXFor(const double* data, double* derivative);
     
-    void derYFor(double* data, double* derivative);
+    void derYFor(const double* data, double* derivative);
     
     void TimeIntFor();
     
@@ -61,8 +61,13 @@ private:
                     double* ddx,double* ddy,
                     double* A, double* B,
                     double* workspace,
-                    double* F);
+                    double* F,
+                    double* derMat,double* derYMat,
+                    double* vect,double* ans);
     
+    void derXBlas(double* data, double* derivative, double* derMat,double* vect,double* ans);
+    
+    void derYBlas(double* data, double* derivative, double* derMat,double* vect,double* ans);
 
                     
 };
