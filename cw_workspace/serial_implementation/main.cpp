@@ -61,10 +61,11 @@ int main(int argc, char **argv)
     // Loading parameters into memory
     double dt       = vm["dt"].as<double>();
     double T        = vm["T"].as<double>();
-    int Nx          = vm["Nx"].as<int>()-1;
-    int Ny          = vm["Ny"].as<int>()-1;
+    int Nx          = vm["Nx"].as<int>();
+    int Ny          = vm["Ny"].as<int>();
     int ic          = vm["ic"].as<int>();
     int whichIntegrationMethod = vm["intType"].as<int>(); // 1: For loop implementation,  2: BLAS implementation
+    
     
     
     int verb = vm["verb"].as<int>();
