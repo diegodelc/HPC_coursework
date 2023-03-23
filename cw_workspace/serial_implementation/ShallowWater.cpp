@@ -137,13 +137,11 @@ void ShallowWater::TimeIntFor() {
             default(shared) private(i)
         for (i = 0;i<3*Nx*Ny;i++) {
             allKs[i] = temp[i];
-        }
+        //}
         
 
         //k2 = calcF(yn + dt*k1/2);
-        #pragma omp parallel for        \
-            default(shared) private(i)
-        for (i = 0;i<3*Nx*Ny;i++) {
+        //for (i = 0;i<3*Nx*Ny;i++) {
             temp[i] = yn[i] + (dt/2) * temp[i];
         }
         calcFFor(  temp,
@@ -155,13 +153,12 @@ void ShallowWater::TimeIntFor() {
             default(shared) private(i)
         for (i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += 2*temp[i];
-        }
+        //}
         
         
         //k3 = calcF(yn + dt*k2/2);
-        #pragma omp parallel for        \
-            default(shared) private(i)
-        for (i = 0;i<3*Nx*Ny;i++) {
+        
+        //for (i = 0;i<3*Nx*Ny;i++) {
             temp[i] = yn[i] + (dt/2)*temp[i];
         }
         calcFFor(  temp,
@@ -174,12 +171,11 @@ void ShallowWater::TimeIntFor() {
             default(shared) private(i)
         for (i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += 2*temp[i];
-        }
+        //}
         
         //k4 = calcF(yn + dt*k3);
-        #pragma omp parallel for        \
-            default(shared) private(i)
-        for (i = 0;i<3*Nx*Ny;i++) {
+        
+        //for (i = 0;i<3*Nx*Ny;i++) {
             temp[i] = yn[i] + dt*temp[i];
         }
         calcFFor(  temp,
@@ -191,12 +187,11 @@ void ShallowWater::TimeIntFor() {
             default(shared) private(i)
         for (i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += temp[i];
-        }
+        //}
         
         //yn = yn + (1/6) * (k1 + 2*k2 + 2*k3 + k4)*dt;
-        #pragma omp parallel for        \
-            default(shared) private(i)
-        for (i = 0;i<3*Nx*Ny;i++) {
+
+        //for (i = 0;i<3*Nx*Ny;i++) {
             yn[i] += (dt/6)*allKs[i];
         }                
         
@@ -725,7 +720,10 @@ void ShallowWater::calcFFor( double* yn,
         derYFor(yn+2*Nx*Ny,dhdy);
         
         //f1 = - (g*dhdx + u.*dudx) - (v.*dudy);
-        for (int i = 0; i<Nx*Ny; i++) {
+        int i;
+        #pragma omp parallel for        \
+            default(shared) private(i)
+        for (i = 0; i<Nx*Ny; i++) {
             f[i] = -9.81*dhdx[i] - yn[i]*dudx[i] - yn[Nx*Ny + i]*dudy[i];
         
         
@@ -743,7 +741,10 @@ void ShallowWater::calcFFor( double* yn,
     
 void ShallowWater::derXFor(const double* data, double* derivative) {
         double* tempDer = new double[7];
-        for (int xcol = 0; xcol < Nx; xcol++) {
+        int xcol;
+        #pragma omp parallel for        \
+            default(shared) private(xcol)
+        for (xcol = 0; xcol < Nx; xcol++) {
             for (int yrow = 0; yrow < Ny; yrow++) {
                 if (3<=xcol && xcol<=Nx-4) {
                     
