@@ -707,7 +707,7 @@ void ShallowWater::calcFFor( double* yn,
         
         
         //#pragma omp parallel
-       // {
+        //{
         //#pragma omp sections
         //{
             //#pragma omp section    
@@ -726,6 +726,7 @@ void ShallowWater::calcFFor( double* yn,
         //}
         //f1 = - (g*dhdx + u.*dudx) - (v.*dudy);
         
+        #pragma omp parallel for
         for (int i = 0; i<Nx*Ny; i++) {
             f[i] = -9.81*dhdx[i] - yn[i]*dudx[i] - yn[Nx*Ny + i]*dudy[i];
         
@@ -743,12 +744,12 @@ void ShallowWater::calcFFor( double* yn,
     };
     
 void ShallowWater::derXFor(const double* data, double* derivative) {
-        double* tempDer = new double[7];
         
-        int xcol;
-        #pragma omp parallel for 
-        for (xcol = 0; xcol < Nx; xcol++) {
-            
+        
+        double* tempDer = new double[7];
+        //#pragma omp parallel for default(shared)
+        for (int xcol = 0; xcol < Nx; xcol++) {
+            double* tempDer = new double[7];
             for (int yrow = 0; yrow < Ny; yrow++) {
                 if (3<=xcol && xcol<=Nx-4) {
                     
@@ -834,13 +835,15 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
                 }
                 
             }
+            //delete[] tempDer;
         }
         delete[] tempDer;
     };
 void ShallowWater::derYFor(const double* data, double* derivative) {
         double* tempDer = new double[7];
-        
+        //#pragma omp parallel default(shared)
         for (int xcol = 0; xcol < Nx; xcol++) {
+            //double* tempDer = new double[7];
             for (int yrow = 0; yrow < Ny; yrow++) {
                 if (3<=yrow && yrow<=Ny-4) {
                     ///*
@@ -925,6 +928,7 @@ void ShallowWater::derYFor(const double* data, double* derivative) {
                 }
                 
             }
+        //delete[] tempDer;
         }
         delete[] tempDer;
     };
