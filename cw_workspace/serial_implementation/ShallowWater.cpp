@@ -710,17 +710,17 @@ void ShallowWater::calcFFor( double* yn,
         //f1 = - (g*dhdx + u.*dudx) - (v.*dudy);
         for (int i = 0; i<Nx*Ny; i++) {
             f[i] = -9.81*dhdx[i] - yn[i]*dudx[i] - yn[Nx*Ny + i]*dudy[i];
-        }
+        //}
         
         
         //f2 = - (u.*dvdx) - (g*dhdy + v.*dvdy);
-        for (int i = 0; i<Nx*Ny; i++) {
+        //for (int i = 0; i<Nx*Ny; i++) {
             f[Nx*Ny + i] = - yn[i]*dvdx[i] - 9.81*dhdy[i] - yn[Nx*Ny + i]*dvdy[i];
-        }
+        //}
         
         
         //f3 = - (u.*dhdx + h.*dudx) - (v.*dhdy + h.*dvdy);
-        for (int i = 0; i<Nx*Ny; i++) {
+        //++++++++++for (int i = 0; i<Nx*Ny; i++) {
             f[2*Nx*Ny + i] = - yn[i]*dhdx[i] - yn[2*Nx*Ny + i]*dudx[i] - yn[Nx*Ny + i]*dhdy[i] - yn[2*Nx*Ny + i]*dvdy[i];
         }
         
