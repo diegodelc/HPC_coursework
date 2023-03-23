@@ -727,6 +727,65 @@ void ShallowWater::calcFFor( double* yn,
     };
     
 void ShallowWater::derXFor(const double* data, double* derivative) {
+        
+        for (int yrow = 0; yrow <Ny; yrow++) {
+            //derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
+            //0th
+            derivative[yrow] =      data[(Nx-3)*Ny+yrow] * (-0.0167) +
+                                    data[(Nx-2)*Ny+yrow] * 0.1500 +
+                                    data[(Nx-1)*Ny+yrow] * (-0.7500) +
+                                    data[(1)*Ny+yrow]    * 0.7500 +
+                                    data[(2)*Ny+yrow]    * (-0.1500) +
+                                    data[(3)*Ny+yrow]    * 0.0167;
+            //1st
+            derivative[1*Ny+yrow] = data[(Nx-2)*Ny+yrow] * (-0.0167) +
+                                    data[(Nx-1)*Ny+yrow] * 0.1500 +
+                                    data[(0)*Ny+yrow]    * (-0.7500) +
+                                    data[(2)*Ny+yrow]    * 0.7500 +
+                                    data[(3)*Ny+yrow]    * (-0.1500) +
+                                    data[(4)*Ny+yrow]    * 0.0167;
+            //2nd
+            derivative[2*Ny+yrow] = data[(Nx-1)*Ny+yrow] * (-0.0167) +
+                                    data[(0)*Ny+yrow]    * 0.1500 +
+                                    data[(1)*Ny+yrow]    * (-0.7500) +
+                                    data[(3)*Ny+yrow]    * 0.7500 +
+                                    data[(4)*Ny+yrow]    * (-0.1500) +
+                                    data[(5)*Ny+yrow]    * 0.0167;
+            
+            //last
+            derivative[(Nx-1)*Ny+yrow] =   data[(Nx-4)*Ny+yrow] * (-0.0167) +
+                                           data[(Nx-3)*Ny+yrow] * 0.1500 +
+                                           data[(Nx-2)*Ny+yrow] * (-0.7500) +
+                                           data[(0)*Ny+yrow]    * 0.7500 +
+                                           data[(1)*Ny+yrow]    * (-0.1500) +
+                                           data[(2)*Ny+yrow]    * 0.0167;
+            //second to last
+            derivative[(Nx-2)*Ny+yrow] =   data[(Nx-5)*Ny+yrow] * (-0.0167) +
+                                           data[(Nx-4)*Ny+yrow] * 0.1500 +
+                                           data[(Nx-3)*Ny+yrow] * (-0.7500) +
+                                           data[(Nx-1)*Ny+yrow] * 0.7500 +
+                                           data[(0)*Ny+yrow]    * (-0.1500) +
+                                           data[(1)*Ny+yrow]    * 0.0167;
+            //third to last
+            derivative[(Nx-3)*Ny+yrow] =   data[(Nx-6)*Ny+yrow] * (-0.0167) +
+                                           data[(Nx-5)*Ny+yrow] * 0.1500 +
+                                           data[(Nx-4)*Ny+yrow] * (-0.7500) +
+                                           data[(Nx-2)*Ny+yrow] * 0.7500 +
+                                           data[(Nx-1)*Ny+yrow] * (-0.1500) +
+                                           data[(0)*Ny+yrow]    * 0.0167;
+            
+            for (int xcol = 3; xcol < Nx-3; xcol++) {
+                derivative[xcol*Ny+yrow] =     data[(xcol-3)*Ny+yrow] * (-0.0167) +
+                                               data[(xcol-2)*Ny+yrow] * 0.1500 +
+                                               data[(xcol-1)*Ny+yrow] * (-0.7500) +
+                                               data[(xcol+1)*Ny+yrow] * 0.7500 +
+                                               data[(xcol+2)*Ny+yrow] * (-0.1500) +
+                                               data[(xcol+3)*Ny+yrow] * 0.0167;
+            }                                                         
+        }
+        
+        
+        /*
         double* tempDer = new double[7];
         for (int xcol = 0; xcol < Nx; xcol++) {
             for (int yrow = 0; yrow < Ny; yrow++) {
@@ -737,7 +796,7 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
                     derivative[xcol*Ny+yrow] = data[(xcol-3)*Ny+yrow]*(-0.0167) +
                                                data[(xcol-2)*Ny+yrow]*0.1500 +
                                                data[(xcol-1)*Ny+yrow]*(-0.7500) +
-                                               //data[xcol*Ny+yrow]   stencil[3]
+                                               //data[xcol*Ny+yrow]  *stencil[3]
                                                data[(xcol+1)*Ny+yrow]*0.7500 +
                                                data[(xcol+2)*Ny+yrow]*(-0.1500) +
                                                data[(xcol+3)*Ny+yrow]*0.0167;
@@ -815,8 +874,26 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
             }
         }
         delete[] tempDer;
+        */
     };
 void ShallowWater::derYFor(const double* data, double* derivative) {
+        for (int xcol = 0; xcol<Nx; xcol++) {
+            //0th
+            //1st
+            //2nd
+            
+            //last
+            //second to last
+            //third to last
+            
+            for (int yrow = 3;yrow<Ny-3;yrow++) {
+                
+            }
+        }
+    
+    
+    
+    
         double* tempDer = new double[7];
         for (int xcol = 0; xcol < Nx; xcol++) {
             for (int yrow = 0; yrow < Ny; yrow++) {
