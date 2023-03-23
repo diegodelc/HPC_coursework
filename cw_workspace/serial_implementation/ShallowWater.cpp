@@ -38,7 +38,7 @@ void ShallowWater::SetInitialConditions() {
             
             cout << endl << "Setting initial conditions: ";
             
-            
+            #pragma omp parallel for
             for (int x = 0;x<Nx; x++) {
                 for (int y = 0;y<Ny; y++) {
                     yn[x*Ny + y] = 0; //u
@@ -50,8 +50,9 @@ void ShallowWater::SetInitialConditions() {
             
             
             if (ic == 1) {
-                
+                #pragma omp parallel for
                 for (int x = 0;x<Nx; x++) {
+                    double xd = (double)x;
                     //ydouble = 0;
                     for (int y = 0;y<Ny; y++) {
                         yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-(xd-50)*(xd-50)/25);
@@ -60,36 +61,41 @@ void ShallowWater::SetInitialConditions() {
                     //xdouble++;
                 }
             } else if (ic == 2) {
-                
-                for (int x = 0;x<Nx; x++) {
+                #pragma omp parallel for
+                for (int y = 0;y<Ny; y++) {
+                    double yd = (double)y;
                     //ydouble = 0;
-                    for (int y = 0;y<Ny; y++) {
+                    for (int x = 0;x<Nx; x++) {
                         yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-(yd-50)*(yd-50)/25);
                         //ydouble++;
                     }
                     //xdouble++;
                 }
             } else if (ic == 3) {
-                
+                #pragma omp parallel for
                 for (int x = 0;x<Nx; x++) {
+                    double xd = (double)x;
                     //ydouble = 0;
                     for (int y = 0;y<Ny; y++) {
-                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-((x-50)*(x-50) + (y-50)*(y-50))/25);
+                        double yd = (double)y;
+                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-((xd-50)*(xd-50) + (yd-50)*(yd-50))/25);
                         //ydouble++;
                     }
                     //xdouble++;
                 }
             } else if (ic == 4) {
-                    
-                    for (int x = 0;x<Nx; x++) {
-                    //ydouble = 0;
+                #pragma omp parallel for
+                for (int x = 0;x<Nx; x++) {
+                    double xd = (double)x;
+                //ydouble = 0;
                     for (int y = 0;y<Ny; y++) {
-                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-((x-25)*(x-25) + (y-25)*(y-25))/25) + exp(-((x-75)*(x-75)+ (y-75)*(y-75) )/25);
+                        double yd = (double)y;
+                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-((xd-25)*(xd-25) + (yd-25)*(yd-25))/25) + exp(-((xd-75)*(xd-75)+ (yd-75)*(yd-75) )/25);
                         //ydouble++;
                     }
                     //xdouble++;
                 }
-            }
+        }
             
             //cout << endl;
             cout << "DONE" << endl;
@@ -478,49 +484,7 @@ void ShallowWater::TimeIntBlas() {
         //}
         
         cblas_dcopy(3*Nx*Ny,temp,1,allKs,1);
-        /*
-        if (counter == 10) {
-            cout << setw(15) << "h";
-            
-            cout << setw(15) << "temp";
-            
-            cout << setw(15) << "dudx";
-            cout << setw(15) << "dudy";
-            
-            cout << setw(15) << "dvdx";
-            cout << setw(15) << "dvdy";
-            
-            cout << setw(15) << "dhdx";
-            cout << setw(15) << "dhdy" << endl << endl;
-            
-            for (int i=0;i<Nx;i++) {
-                for (int j=0; j<Ny;j++) {
-                    cout << setw(15) << yn[2*Nx*Ny + i*Ny + j]; //h
-                    
-                    cout << setw(15) << temp[i*Ny + j];
-                    
-                    cout << setw(15) << dudx[i*Ny + j];
-                    cout << setw(15) << dudy[i*Ny + j];
-                    
-                    cout << setw(15) << dvdx[i*Ny + j];
-                    cout << setw(15) << dvdy[i*Ny + j];
-                    
-                    cout << setw(15) << dhdx[i*Ny + j];
-                    cout << setw(15) << dhdy[i*Ny + j] << endl;
-                    
-                
-                }
-            }
         
-        cout << endl;
-        for (int i = 0; i<10; i++) {
-                cout << setw(10) << B[i];
-                cout << setw(10) << B[i+1];
-                cout << setw(10) << B[i+2] << endl;
-            
-        }
-        }
-        */
         
         //k2 = calcF(yn + dt*k1/2);
         for (int i = 0;i<3*Nx*Ny;i++) {
