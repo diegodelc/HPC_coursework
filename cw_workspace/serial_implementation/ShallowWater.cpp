@@ -432,7 +432,7 @@ void ShallowWater::TimeIntBlas() {
     if (Ny>Nx) {
         paddedLen = Ny+6;
     } else {
-        paddedLen = Nx+6;
+        paddedLen = Nx+6;S
     }
     double* vect = new double[paddedLen];
     double* ans = new double[paddedLen];
