@@ -47,27 +47,50 @@ void ShallowWater::SetInitialConditions() {
             }
             
 
-            //  This is slower than it has to be, it is evaluating the if Nx*Ny times, 
-            //  would be better to evaluate if and then go into for
-            //double xdouble = 0;
-            //double ydouble;
-            for (int x = 0;x<Nx; x++) {
-                //ydouble = 0;
-                for (int y = 0;y<Ny; y++) {
-                    if (ic == 1) {
-                        yn[2*Nx*Ny + x*Ny + y] = initialCond1((double)x,(double)y*dx);
-                    } else if (ic == 2) {
-                        yn[2*Nx*Ny + x*Ny + y] = initialCond2((double)x*dx,(double)y*dx);
-                    } else if (ic == 3) {
-                        yn[2*Nx*Ny + x*Ny + y] = initialCond3((double)x*dx,(double)y*dx);
-                    } else if (ic == 4) {
-                        yn[2*Nx*Ny + x*Ny + y] = initialCond4((double)x*dx,(double)y*dx);
-                        
+            
+            
+            if (ic == 1) {
+                
+                for (int x = 0;x<Nx; x++) {
+                    //ydouble = 0;
+                    for (int y = 0;y<Ny; y++) {
+                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-(xd-50)*(xd-50)/25);
+                        //ydouble++;
                     }
-                    //ydouble++;
+                    //xdouble++;
                 }
-                //xdouble++;
+            } else if (ic == 2) {
+                
+                for (int x = 0;x<Nx; x++) {
+                    //ydouble = 0;
+                    for (int y = 0;y<Ny; y++) {
+                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-(yd-50)*(yd-50)/25);
+                        //ydouble++;
+                    }
+                    //xdouble++;
+                }
+            } else if (ic == 3) {
+                
+                for (int x = 0;x<Nx; x++) {
+                    //ydouble = 0;
+                    for (int y = 0;y<Ny; y++) {
+                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-((x-50)*(x-50) + (y-50)*(y-50))/25);
+                        //ydouble++;
+                    }
+                    //xdouble++;
+                }
+            } else if (ic == 4) {
+                    
+                    for (int x = 0;x<Nx; x++) {
+                    //ydouble = 0;
+                    for (int y = 0;y<Ny; y++) {
+                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-((x-25)*(x-25) + (y-25)*(y-25))/25) + exp(-((x-75)*(x-75)+ (y-75)*(y-75) )/25);
+                        //ydouble++;
+                    }
+                    //xdouble++;
+                }
             }
+            
             //cout << endl;
             cout << "DONE" << endl;
             
@@ -91,41 +114,7 @@ void ShallowWater::TimeIntFor() {
     //int counter = 0;
     for (double time = 0; time < T; time += dt) { //T and dt are double, so easier to make time double than try and cast them to int
         //This is for debugging, it prints everything
-        /*
-        if (counter == 50) {
-            cout << setw(15) << "h";
-            
-            cout << setw(15) << "temp";
-            
-            cout << setw(15) << "dudx";
-            cout << setw(15) << "dudy";
-            
-            cout << setw(15) << "dvdx";
-            cout << setw(15) << "dvdy";
-            
-            cout << setw(15) << "dhdx";
-            cout << setw(15) << "dhdy" << endl << endl;
-            
-            for (int i=0;i<Nx;i++) {
-                for (int j=0; j<Ny;j++) {
-                    cout << setw(15) << yn[2*Nx*Ny + i*Ny + j]; //h
-                    
-                    cout << setw(15) << temp[Nx*Ny + i*Ny + j];
-                    
-                    cout << setw(15) << dudx[i*Ny + j];
-                    cout << setw(15) << dudy[i*Ny + j];
-                    
-                    cout << setw(15) << dvdx[i*Ny + j];
-                    cout << setw(15) << dvdy[i*Ny + j];
-                    
-                    cout << setw(15) << dhdx[i*Ny + j];
-                    cout << setw(15) << dhdy[i*Ny + j] << endl;
-                    
-                
-                }
-            }
-        }
-        */
+        
         //k1 = calcF(yn)
         
         calcFFor(  yn,
@@ -134,7 +123,7 @@ void ShallowWater::TimeIntFor() {
                 dhdx,dhdy,
                 temp);                
         
-        
+        #pragma omp parallel for
         for (int i = 0;i<3*Nx*Ny;i++) {
             allKs[i] = temp[i];
         //}
@@ -149,7 +138,8 @@ void ShallowWater::TimeIntFor() {
                 dvdx,dvdy,
                 dhdx,dhdy,
                 temp);
-        
+                
+        #pragma omp parallel for
         for (int i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += 2*temp[i];
         //}
@@ -166,7 +156,7 @@ void ShallowWater::TimeIntFor() {
                 dhdx,dhdy,
                 temp);
                 
-        
+        #pragma omp parallel for
         for (int i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += 2*temp[i];
         //}
@@ -181,7 +171,7 @@ void ShallowWater::TimeIntFor() {
                 dvdx,dvdy,
                 dhdx,dhdy,
                 temp);
-        
+        #pragma omp parallel for
         for (int i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += temp[i];
         //}
@@ -432,7 +422,7 @@ void ShallowWater::TimeIntBlas() {
     if (Ny>Nx) {
         paddedLen = Ny+6;
     } else {
-        paddedLen = Nx+6;S
+        paddedLen = Nx+6;
     }
     double* vect = new double[paddedLen];
     double* ans = new double[paddedLen];
@@ -643,19 +633,7 @@ void ShallowWater::TimeIntegrate() {
         
 
 //double stencil[7]; //declared in ShallowWater.h
-double ShallowWater::initialCond1(double x,double y) {
-        //return 10 + exp(-(x-50)*(x-50)/25);
-        return 10 + exp(-(x-5)*(x-5)/2.5); //for a 10 by 10 grid
-    };
-double ShallowWater::initialCond2(double x,double y) {
-        return 10 + exp(-(y-50)*(y-50)/25);
-    };
-double ShallowWater::initialCond3(double x,double y) {
-        return 10 + exp(-((x-50)*(x-50) + (y-50)*(y-50))/25);
-    };
-double ShallowWater::initialCond4(double x,double y) {
-        return 10 + exp(-((x-25)*(x-25) + (y-25)*(y-25))/25) + exp(-((x-75)*(x-75)+ (y-75)*(y-75) )/25);
-    };
+
     
 void ShallowWater::multVectByConst(const int& n,double* vect1,const double& constVal,double* ans,const char& HOW) {
         /*
@@ -744,192 +722,123 @@ void ShallowWater::calcFFor( double* yn,
     };
     
 void ShallowWater::derXFor(const double* data, double* derivative) {
-        
-        
-        double* tempDer = new double[7];
-        //#pragma omp parallel for default(shared)
-        for (int xcol = 0; xcol < Nx; xcol++) {
-            double* tempDer = new double[7];
-            for (int yrow = 0; yrow < Ny; yrow++) {
-                if (3<=xcol && xcol<=Nx-4) {
-                    
-                    tempDer[0] = data[(xcol-3)*Ny+yrow];
-                    tempDer[1] = data[(xcol-2)*Ny+yrow];
-                    tempDer[2] = data[(xcol-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(xcol+1)*Ny+yrow];
-                    tempDer[5] = data[(xcol+2)*Ny+yrow];
-                    tempDer[6] = data[(xcol+3)*Ny+yrow];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                    
-                    
-                    //derivative[xcol*Ny+yrow] = data[(xcol-3)*Ny+yrow]*-0.0167 + data[(xcol-2)*Ny+yrow]*0.1500 + data[(xcol-1)*Ny+yrow]*-0.7500 + data[(xcol+1)*Ny+yrow]*0.7500 + data[(xcol+2)*Ny+yrow]*-0.1500 + data[(xcol+3)*Ny+yrow]*0.0167;
-                    
-                } else if (xcol == 0) { //first column 
-                    
-                    tempDer[0] = data[(Nx-3)*Ny+yrow];
-                    tempDer[1] = data[(Nx-2)*Ny+yrow];
-                    tempDer[2] = data[(Nx-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(xcol+1)*Ny+yrow];
-                    tempDer[5] = data[(xcol+2)*Ny+yrow];
-                    tempDer[6] = data[(xcol+3)*Ny+yrow];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                    
-                    //-0.0167, 0.1500, -0.7500, 0, 0.7500, -0.1500, 0.0167
-                    
-                    //derivative[xcol*Ny+yrow] = data[(Nx-3)*Ny+yrow]*-0.0167 + data[(Nx-2)*Ny+yrow]*0.15 + data[(Nx-1)*Ny+yrow]*-0.75 + data[(xcol+1)*Ny+yrow]*0.75 + data[(xcol+2)*Ny+yrow]*-0.15 + data[(xcol+3)*Ny+yrow]*0.0167;
-                    
-                } else if (xcol == 1) { //second column                    
-                    tempDer[0] = data[(Nx-2)*Ny+yrow];
-                    tempDer[1] = data[(Nx-1)*Ny+yrow];
-                    tempDer[2] = data[(xcol-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(xcol+1)*Ny+yrow];
-                    tempDer[5] = data[(xcol+2)*Ny+yrow];
-                    tempDer[6] = data[(xcol+3)*Ny+yrow];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (xcol == 2) { //third column                    
-                    tempDer[0] = data[(Nx-1)*Ny+yrow];
-                    tempDer[1] = data[(xcol-2)*Ny+yrow];
-                    tempDer[2] = data[(xcol-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(xcol+1)*Ny+yrow];
-                    tempDer[5] = data[(xcol+2)*Ny+yrow];
-                    tempDer[6] = data[(xcol+3)*Ny+yrow];
+        #pragma omp parallel for
+        for (int yrow = 0; yrow <Ny; yrow++) {
+            //derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
+            //0th
+            derivative[yrow] =      data[(Nx-3)*Ny+yrow] * (-0.0167) +
+                                    data[(Nx-2)*Ny+yrow] * 0.1500 +
+                                    data[(Nx-1)*Ny+yrow] * (-0.7500) +
+                                    data[(1)*Ny+yrow]    * 0.7500 +
+                                    data[(2)*Ny+yrow]    * (-0.1500) +
+                                    data[(3)*Ny+yrow]    * 0.0167;
+            //1st
+            derivative[1*Ny+yrow] = data[(Nx-2)*Ny+yrow] * (-0.0167) +
+                                    data[(Nx-1)*Ny+yrow] * 0.1500 +
+                                    data[(0)*Ny+yrow]    * (-0.7500) +
+                                    data[(2)*Ny+yrow]    * 0.7500 +
+                                    data[(3)*Ny+yrow]    * (-0.1500) +
+                                    data[(4)*Ny+yrow]    * 0.0167;
+            //2nd
+            derivative[2*Ny+yrow] = data[(Nx-1)*Ny+yrow] * (-0.0167) +
+                                    data[(0)*Ny+yrow]    * 0.1500 +
+                                    data[(1)*Ny+yrow]    * (-0.7500) +
+                                    data[(3)*Ny+yrow]    * 0.7500 +
+                                    data[(4)*Ny+yrow]    * (-0.1500) +
+                                    data[(5)*Ny+yrow]    * 0.0167;
+            
+            //last
+            derivative[(Nx-1)*Ny+yrow] =   data[(Nx-4)*Ny+yrow] * (-0.0167) +
+                                           data[(Nx-3)*Ny+yrow] * 0.1500 +
+                                           data[(Nx-2)*Ny+yrow] * (-0.7500) +
+                                           data[(0)*Ny+yrow]    * 0.7500 +
+                                           data[(1)*Ny+yrow]    * (-0.1500) +
+                                           data[(2)*Ny+yrow]    * 0.0167;
+            //second to last
+            derivative[(Nx-2)*Ny+yrow] =   data[(Nx-5)*Ny+yrow] * (-0.0167) +
+                                           data[(Nx-4)*Ny+yrow] * 0.1500 +
+                                           data[(Nx-3)*Ny+yrow] * (-0.7500) +
+                                           data[(Nx-1)*Ny+yrow] * 0.7500 +
+                                           data[(0)*Ny+yrow]    * (-0.1500) +
+                                           data[(1)*Ny+yrow]    * 0.0167;
+            //third to last
+            derivative[(Nx-3)*Ny+yrow] =   data[(Nx-6)*Ny+yrow] * (-0.0167) +
+                                           data[(Nx-5)*Ny+yrow] * 0.1500 +
+                                           data[(Nx-4)*Ny+yrow] * (-0.7500) +
+                                           data[(Nx-2)*Ny+yrow] * 0.7500 +
+                                           data[(Nx-1)*Ny+yrow] * (-0.1500) +
+                                           data[(0)*Ny+yrow]    * 0.0167;
+            
+            for (int xcol = 3; xcol < Nx-3; xcol++) {
+                derivative[xcol*Ny+yrow] =     data[(xcol-3)*Ny+yrow] * (-0.0167) +
+                                               data[(xcol-2)*Ny+yrow] * 0.1500 +
+                                               data[(xcol-1)*Ny+yrow] * (-0.7500) +
+                                               data[(xcol+1)*Ny+yrow] * 0.7500 +
+                                               data[(xcol+2)*Ny+yrow] * (-0.1500) +
+                                               data[(xcol+3)*Ny+yrow] * 0.0167;
+            }                                                         
 
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (xcol == Nx-1) { //last column                    
-                    tempDer[0] = data[(xcol-3)*Ny+yrow];
-                    tempDer[1] = data[(xcol-2)*Ny+yrow];
-                    tempDer[2] = data[(xcol-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(0)*Ny+yrow];
-                    tempDer[5] = data[(1)*Ny+yrow];
-                    tempDer[6] = data[(2)*Ny+yrow];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (xcol == Nx-2) { //second-to-last column                    
-                    tempDer[0] = data[(xcol-3)*Ny+yrow];
-                    tempDer[1] = data[(xcol-2)*Ny+yrow];
-                    tempDer[2] = data[(xcol-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(xcol+1)*Ny+yrow];
-                    tempDer[5] = data[(0)*Ny+yrow];
-                    tempDer[6] = data[(1)*Ny+yrow];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (xcol == Nx-3) { //third-to-last column
-                    tempDer[0] = data[(xcol-3)*Ny+yrow];
-                    tempDer[1] = data[(xcol-2)*Ny+yrow];
-                    tempDer[2] = data[(xcol-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(xcol+1)*Ny+yrow];
-                    tempDer[5] = data[(xcol+2)*Ny+yrow];
-                    tempDer[6] = data[(0)*Ny+yrow];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                }
-                
-            }
-            //delete[] tempDer;
         }
-        delete[] tempDer;
+        
     };
 void ShallowWater::derYFor(const double* data, double* derivative) {
-        double* tempDer = new double[7];
-        //#pragma omp parallel default(shared)
-        for (int xcol = 0; xcol < Nx; xcol++) {
-            //double* tempDer = new double[7];
-            for (int yrow = 0; yrow < Ny; yrow++) {
-                if (3<=yrow && yrow<=Ny-4) {
-                    ///*
-                    tempDer[0] = data[xcol*Ny+yrow-3];
-                    tempDer[1] = data[xcol*Ny+yrow-2];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+yrow+2];
-                    tempDer[6] = data[xcol*Ny+yrow+3];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                    //*/
-                    
-                    
-                    
-                    //-0.0167, 0.1500, -0.7500, 0, 0.7500, -0.1500, 0.0167
-                    
-                    //derivative[xcol*Ny+yrow] = -data[xcol*Ny+yrow-3]*0.0167 + data[xcol*Ny+yrow-2]*0.15 - data[xcol*Ny+yrow-1]*0.75 + data[xcol*Ny+yrow+1]*0.75 - data[xcol*Ny+yrow+2]*0.015 + data[xcol*Ny+yrow+3]*0.0167;
-                    
-                } else if (yrow == 0) { //first row                    
-                    tempDer[0] = data[xcol*Ny+Ny-3];
-                    tempDer[1] = data[xcol*Ny+Ny-2];
-                    tempDer[2] = data[xcol*Ny+Ny-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+yrow+2];
-                    tempDer[6] = data[xcol*Ny+yrow+3];
+    #pragma omp parallel for
+    for (int xcol = 0; xcol<Nx; xcol++) {
+            //0th
+            derivative[xcol*Ny] =  data[(xcol)*Ny+Ny-3] * (-0.0167) +
+                                   data[(xcol)*Ny+Ny-2] * 0.1500 +
+                                   data[(xcol)*Ny+Ny-1] * (-0.7500) +
+                                   data[(xcol)*Ny+1] * 0.7500 +
+                                   data[(xcol)*Ny+2] * (-0.1500) +
+                                   data[(xcol)*Ny+3]    * 0.0167;
+            //1st
+            derivative[xcol*Ny+1] =    data[(xcol)*Ny+Ny-2] * (-0.0167) +
+                                       data[(xcol)*Ny+Ny-1] * 0.1500 +
+                                       data[(xcol)*Ny+0] * (-0.7500) +
+                                       data[(xcol)*Ny+2] * 0.7500 +
+                                       data[(xcol)*Ny+3] * (-0.1500) +
+                                       data[(xcol)*Ny+4]    * 0.0167;
+            //2nd
+            derivative[xcol*Ny+2] =    data[(xcol)*Ny+Ny-1] * (-0.0167) +
+                                       data[(xcol)*Ny+0] * 0.1500 +
+                                       data[(xcol)*Ny+1] * (-0.7500) +
+                                       data[(xcol)*Ny+3] * 0.7500 +
+                                       data[(xcol)*Ny+4] * (-0.1500) +
+                                       data[(xcol)*Ny+5]    * 0.0167;
+            
+            //last
+            derivative[xcol*Ny+Ny-1] = data[(xcol)*Ny+Ny-4] * (-0.0167) +
+                                       data[(xcol)*Ny+Ny-3] * 0.1500 +
+                                       data[(xcol)*Ny+Ny-2] * (-0.7500) +
+                                       data[(xcol)*Ny+0] * 0.7500 +
+                                       data[(xcol)*Ny+1] * (-0.1500) +
+                                       data[(xcol)*Ny+2]    * 0.0167;
+            //second to last
+            derivative[xcol*Ny+Ny-2] = data[(xcol)*Ny+Ny-5] * (-0.0167) +
+                                       data[(xcol)*Ny+Ny-4] * 0.1500 +
+                                       data[(xcol)*Ny+Ny-3] * (-0.7500) +
+                                       data[(xcol)*Ny+Ny-1] * 0.7500 +
+                                       data[(xcol)*Ny+0] * (-0.1500) +
+                                       data[(xcol)*Ny+1]    * 0.0167;
+            //third to last
+            derivative[xcol*Ny+Ny-3] = data[(xcol)*Ny+Ny-6] * (-0.0167) +
+                                       data[(xcol)*Ny+Ny-5] * 0.1500 +
+                                       data[(xcol)*Ny+Ny-4] * (-0.7500) +
+                                       data[(xcol)*Ny+Ny-2] * 0.7500 +
+                                       data[(xcol)*Ny+Ny-1] * (-0.1500) +
+                                       data[(xcol)*Ny+0]    * 0.0167;
+            
+            for (int yrow = 3;yrow<Ny-3;yrow++) {                
+                derivative[xcol*Ny+yrow] = data[(xcol)*Ny+yrow-3] * (-0.0167) +
+                                           data[(xcol)*Ny+yrow-2] * 0.1500 +
+                                           data[(xcol)*Ny+yrow-1] * (-0.7500) +
+                                           data[(xcol)*Ny+yrow+1] * 0.7500 +
+                                           data[(xcol)*Ny+yrow+2] * (-0.1500) +
+                                           data[(xcol)*Ny+yrow+3]    * 0.0167;
 
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (yrow == 1) { //second row
-                    tempDer[0] = data[xcol*Ny+Ny-2];
-                    tempDer[1] = data[xcol*Ny+Ny-1];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+yrow+2];
-                    tempDer[6] = data[xcol*Ny+yrow+3];
-
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (yrow == 2) { //third row
-                    tempDer[0] = data[xcol*Ny+Ny-1];
-                    tempDer[1] = data[xcol*Ny+yrow-2];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+yrow+2];
-                    tempDer[6] = data[xcol*Ny+yrow+3];
-
-
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (yrow == Nx-1) { //last row
-                    tempDer[0] = data[xcol*Ny+yrow-3];
-                    tempDer[1] = data[xcol*Ny+yrow-2];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+0];
-                    tempDer[5] = data[xcol*Ny+1];
-                    tempDer[6] = data[xcol*Ny+2];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (yrow == Ny-2) { //second-to-last row                    
-                    tempDer[0] = data[xcol*Ny+yrow-3];
-                    tempDer[1] = data[xcol*Ny+yrow-2];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+0];
-                    tempDer[6] = data[xcol*Ny+1];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (yrow == Ny-3) { //third-to-last row
-                    tempDer[0] = data[xcol*Ny+yrow-3];
-                    tempDer[1] = data[xcol*Ny+yrow-2];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+yrow+2];
-                    tempDer[6] = data[xcol*Ny+0];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                }
-                
             }
-        //delete[] tempDer;
+        
         }
-        delete[] tempDer;
+        
     };
     
