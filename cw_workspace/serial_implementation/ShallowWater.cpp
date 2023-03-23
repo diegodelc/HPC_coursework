@@ -784,100 +784,9 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
             }                                                         
         }
         
-        
-        /*
-        double* tempDer = new double[7];
-        for (int xcol = 0; xcol < Nx; xcol++) {
-            for (int yrow = 0; yrow < Ny; yrow++) {
-                if (3<=xcol && xcol<=Nx-4) {
-                    
-                    
-                    
-                    derivative[xcol*Ny+yrow] = data[(xcol-3)*Ny+yrow]*(-0.0167) +
-                                               data[(xcol-2)*Ny+yrow]*0.1500 +
-                                               data[(xcol-1)*Ny+yrow]*(-0.7500) +
-                                               //data[xcol*Ny+yrow]  *stencil[3]
-                                               data[(xcol+1)*Ny+yrow]*0.7500 +
-                                               data[(xcol+2)*Ny+yrow]*(-0.1500) +
-                                               data[(xcol+3)*Ny+yrow]*0.0167;
-                                         
-                                            
-                    
-                } else if (xcol == 0) { //first column 
-                    
-                    tempDer[0] = data[(Nx-3)*Ny+yrow];
-                    tempDer[1] = data[(Nx-2)*Ny+yrow];
-                    tempDer[2] = data[(Nx-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(xcol+1)*Ny+yrow];
-                    tempDer[5] = data[(xcol+2)*Ny+yrow];
-                    tempDer[6] = data[(xcol+3)*Ny+yrow];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                    
-                    //-0.0167, 0.1500, -0.7500, 0, 0.7500, -0.1500, 0.0167
-                    
-                    //derivative[xcol*Ny+yrow] = data[(Nx-3)*Ny+yrow]*-0.0167 + data[(Nx-2)*Ny+yrow]*0.15 + data[(Nx-1)*Ny+yrow]*-0.75 + data[(xcol+1)*Ny+yrow]*0.75 + data[(xcol+2)*Ny+yrow]*-0.15 + data[(xcol+3)*Ny+yrow]*0.0167;
-                    
-                } else if (xcol == 1) { //second column                    
-                    tempDer[0] = data[(Nx-2)*Ny+yrow];
-                    tempDer[1] = data[(Nx-1)*Ny+yrow];
-                    tempDer[2] = data[(xcol-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(xcol+1)*Ny+yrow];
-                    tempDer[5] = data[(xcol+2)*Ny+yrow];
-                    tempDer[6] = data[(xcol+3)*Ny+yrow];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (xcol == 2) { //third column                    
-                    tempDer[0] = data[(Nx-1)*Ny+yrow];
-                    tempDer[1] = data[(xcol-2)*Ny+yrow];
-                    tempDer[2] = data[(xcol-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(xcol+1)*Ny+yrow];
-                    tempDer[5] = data[(xcol+2)*Ny+yrow];
-                    tempDer[6] = data[(xcol+3)*Ny+yrow];
-
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (xcol == Nx-1) { //last column                    
-                    tempDer[0] = data[(xcol-3)*Ny+yrow];
-                    tempDer[1] = data[(xcol-2)*Ny+yrow];
-                    tempDer[2] = data[(xcol-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(0)*Ny+yrow];
-                    tempDer[5] = data[(1)*Ny+yrow];
-                    tempDer[6] = data[(2)*Ny+yrow];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (xcol == Nx-2) { //second-to-last column                    
-                    tempDer[0] = data[(xcol-3)*Ny+yrow];
-                    tempDer[1] = data[(xcol-2)*Ny+yrow];
-                    tempDer[2] = data[(xcol-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(xcol+1)*Ny+yrow];
-                    tempDer[5] = data[(0)*Ny+yrow];
-                    tempDer[6] = data[(1)*Ny+yrow];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (xcol == Nx-3) { //third-to-last column
-                    tempDer[0] = data[(xcol-3)*Ny+yrow];
-                    tempDer[1] = data[(xcol-2)*Ny+yrow];
-                    tempDer[2] = data[(xcol-1)*Ny+yrow];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[(xcol+1)*Ny+yrow];
-                    tempDer[5] = data[(xcol+2)*Ny+yrow];
-                    tempDer[6] = data[(0)*Ny+yrow];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                }
-                
-            }
-        }
-        delete[] tempDer;
-        */
     };
 void ShallowWater::derYFor(const double* data, double* derivative) {
-        for (int xcol = 0; xcol<Nx; xcol++) {
+    for (int xcol = 0; xcol<Nx; xcol++) {
             //0th
             derivative[xcol*Ny] =  data[(xcol)*Ny+Ny-3] * (-0.0167) +
                                    data[(xcol)*Ny+Ny-2] * 0.1500 +
@@ -922,104 +831,15 @@ void ShallowWater::derYFor(const double* data, double* derivative) {
                                        data[(xcol)*Ny+Ny-1] * (-0.1500) +
                                        data[(xcol)*Ny+0]    * 0.0167;
             
-            for (int yrow = 3;yrow<Ny-3;yrow++) {
-                derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1, data+xcol*Ny+yrow-3,1);
+            for (int yrow = 3;yrow<Ny-3;yrow++) {                
+                derivative[xcol*Ny+yrow] = data[(xcol)*Ny+yrow-3] * (-0.0167) +
+                                           data[(xcol)*Ny+yrow-2] * 0.1500 +
+                                           data[(xcol)*Ny+yrow-1] * (-0.7500) +
+                                           data[(xcol)*Ny+yrow+1] * 0.7500 +
+                                           data[(xcol)*Ny+yrow+2] * (-0.1500) +
+                                           data[(xcol)*Ny+yrow+3]    * 0.0167;
             }
         }
-    
-    
-        /*
-    
-        double* tempDer = new double[7];
-        for (int xcol = 0; xcol < Nx; xcol++) {
-            for (int yrow = 0; yrow < Ny; yrow++) {
-                if (3<=yrow && yrow<=Ny-4) {
-                    
-                    tempDer[0] = data[xcol*Ny+yrow-3];
-                    tempDer[1] = data[xcol*Ny+yrow-2];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+yrow+2];
-                    tempDer[6] = data[xcol*Ny+yrow+3];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                    
-                    
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1, data+xcol*Ny+yrow-3,1);
-                    
-                    
-                    //-0.0167, 0.1500, -0.7500, 0, 0.7500, -0.1500, 0.0167
-                    
-                    //derivative[xcol*Ny+yrow] = -data[xcol*Ny+yrow-3]*0.0167 + data[xcol*Ny+yrow-2]*0.15 - data[xcol*Ny+yrow-1]*0.75 + data[xcol*Ny+yrow+1]*0.75 - data[xcol*Ny+yrow+2]*0.015 + data[xcol*Ny+yrow+3]*0.0167;
-                    
-                } else if (yrow == 0) { //first row                    
-                    tempDer[0] = data[xcol*Ny+Ny-3];
-                    tempDer[1] = data[xcol*Ny+Ny-2];
-                    tempDer[2] = data[xcol*Ny+Ny-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+yrow+2];
-                    tempDer[6] = data[xcol*Ny+yrow+3];
-
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (yrow == 1) { //second row
-                    tempDer[0] = data[xcol*Ny+Ny-2];
-                    tempDer[1] = data[xcol*Ny+Ny-1];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+yrow+2];
-                    tempDer[6] = data[xcol*Ny+yrow+3];
-
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (yrow == 2) { //third row
-                    tempDer[0] = data[xcol*Ny+Ny-1];
-                    tempDer[1] = data[xcol*Ny+yrow-2];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+yrow+2];
-                    tempDer[6] = data[xcol*Ny+yrow+3];
-
-
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (yrow == Nx-1) { //last row
-                    tempDer[0] = data[xcol*Ny+yrow-3];
-                    tempDer[1] = data[xcol*Ny+yrow-2];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+0];
-                    tempDer[5] = data[xcol*Ny+1];
-                    tempDer[6] = data[xcol*Ny+2];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (yrow == Ny-2) { //second-to-last row                    
-                    tempDer[0] = data[xcol*Ny+yrow-3];
-                    tempDer[1] = data[xcol*Ny+yrow-2];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+0];
-                    tempDer[6] = data[xcol*Ny+1];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                } else if (yrow == Ny-3) { //third-to-last row
-                    tempDer[0] = data[xcol*Ny+yrow-3];
-                    tempDer[1] = data[xcol*Ny+yrow-2];
-                    tempDer[2] = data[xcol*Ny+yrow-1];
-                    tempDer[3] = data[xcol*Ny+yrow]; //multiplied by zero
-                    tempDer[4] = data[xcol*Ny+yrow+1];
-                    tempDer[5] = data[xcol*Ny+yrow+2];
-                    tempDer[6] = data[xcol*Ny+0];
-                    
-                    derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
-                }
-                
-            }
-        }
-        delete[] tempDer;
-        */
+        
     };
     
