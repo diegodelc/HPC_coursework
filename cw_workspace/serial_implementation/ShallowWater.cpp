@@ -6,6 +6,8 @@ using namespace std;
 
 #include "ShallowWater.h"
 
+#include <omp.h>
+
 ShallowWater::ShallowWater(double dt_in,double T_in,
                             int Nx_in,int Ny_in,
                             int ic_in,
@@ -125,18 +127,23 @@ void ShallowWater::TimeIntFor() {
         }
         */
         //k1 = calcF(yn)
+        int i;
         calcFFor(  yn,
                 dudx,dudy,
                 dvdx,dvdy,
                 dhdx,dhdy,
                 temp);                
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        #pragma omp parallel for        \
+            default(shared) private(i)
+        for (i = 0;i<3*Nx*Ny;i++) {
             allKs[i] = temp[i];
         }
         
 
         //k2 = calcF(yn + dt*k1/2);
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        #pragma omp parallel for        \
+            default(shared) private(i)
+        for (i = 0;i<3*Nx*Ny;i++) {
             temp[i] = yn[i] + (dt/2) * temp[i];
         }
         calcFFor(  temp,
@@ -144,13 +151,17 @@ void ShallowWater::TimeIntFor() {
                 dvdx,dvdy,
                 dhdx,dhdy,
                 temp);
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        #pragma omp parallel for        \
+            default(shared) private(i)
+        for (i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += 2*temp[i];
         }
         
         
         //k3 = calcF(yn + dt*k2/2);
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        #pragma omp parallel for        \
+            default(shared) private(i)
+        for (i = 0;i<3*Nx*Ny;i++) {
             temp[i] = yn[i] + (dt/2)*temp[i];
         }
         calcFFor(  temp,
@@ -159,13 +170,16 @@ void ShallowWater::TimeIntFor() {
                 dhdx,dhdy,
                 temp);
                 
-        
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        #pragma omp parallel for        \
+            default(shared) private(i)
+        for (i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += 2*temp[i];
         }
         
         //k4 = calcF(yn + dt*k3);
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        #pragma omp parallel for        \
+            default(shared) private(i)
+        for (i = 0;i<3*Nx*Ny;i++) {
             temp[i] = yn[i] + dt*temp[i];
         }
         calcFFor(  temp,
@@ -173,13 +187,16 @@ void ShallowWater::TimeIntFor() {
                 dvdx,dvdy,
                 dhdx,dhdy,
                 temp);
-        
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        #pragma omp parallel for        \
+            default(shared) private(i)
+        for (i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += temp[i];
         }
         
         //yn = yn + (1/6) * (k1 + 2*k2 + 2*k3 + k4)*dt;
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        #pragma omp parallel for        \
+            default(shared) private(i)
+        for (i = 0;i<3*Nx*Ny;i++) {
             yn[i] += (dt/6)*allKs[i];
         }                
         
@@ -710,17 +727,15 @@ void ShallowWater::calcFFor( double* yn,
         //f1 = - (g*dhdx + u.*dudx) - (v.*dudy);
         for (int i = 0; i<Nx*Ny; i++) {
             f[i] = -9.81*dhdx[i] - yn[i]*dudx[i] - yn[Nx*Ny + i]*dudy[i];
-        //}
+        
         
         
         //f2 = - (u.*dvdx) - (g*dhdy + v.*dvdy);
-        //for (int i = 0; i<Nx*Ny; i++) {
             f[Nx*Ny + i] = - yn[i]*dvdx[i] - 9.81*dhdy[i] - yn[Nx*Ny + i]*dvdy[i];
-        //}
+        
         
         
         //f3 = - (u.*dhdx + h.*dudx) - (v.*dhdy + h.*dvdy);
-        //++++++++++for (int i = 0; i<Nx*Ny; i++) {
             f[2*Nx*Ny + i] = - yn[i]*dhdx[i] - yn[2*Nx*Ny + i]*dudx[i] - yn[Nx*Ny + i]*dhdy[i] - yn[2*Nx*Ny + i]*dvdy[i];
         }
         

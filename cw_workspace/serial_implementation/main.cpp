@@ -12,6 +12,8 @@ using namespace std;
 
 #include "ShallowWater.h"
 
+#include <omp.h>
+
 namespace po = boost::program_options;
 
 int main(int argc, char **argv)
