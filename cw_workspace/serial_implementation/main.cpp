@@ -8,7 +8,7 @@ using namespace std;
 
 #include <boost/program_options.hpp>
 #include <boost/timer/timer.hpp>
-#include <omp.h>
+
 
 #include "ShallowWater.h"
 
@@ -26,16 +26,9 @@ int main(int argc, char **argv)
     --Ny arg    //Number of grid points in y
     --ic arg    //Index of the initial condition to use (1-4)
     */
-    /*
-    double dt = 0.1;
-    double T = 5;
-    int Nx = 100;
-    int Ny = 100;
-    int ic = 4;
-    int whichIntegrationMethod = 1;
-    */
     
-        // Boost program options
+    
+    // Boost program options
     po::options_description opts("Allowed options");
     opts.add_options()
         ("help", "Prints list of options")

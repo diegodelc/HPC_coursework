@@ -227,6 +227,7 @@ void ShallowWater::calcFBLAS( double* yn,
     
     
     //stack derivatives in correct orders
+    #pragma omp parallel for
     for (int i = 0; i<Nx*Ny; i++) {
         //stack x derivatives
         ddx[i*3] = dudx[i];
@@ -244,7 +245,7 @@ void ShallowWater::calcFBLAS( double* yn,
     int kua = 2;
     int lda = 1 + kla + kua;
     //double* A = new double[lda*Nx*Ny*3];
-    
+    #pragma omp parallel for
     for (int i = 0; i<Nx*Ny; i++) {
         //first column
         A[i*lda*3] = 0;
@@ -273,7 +274,7 @@ void ShallowWater::calcFBLAS( double* yn,
     int kub = 1;
     int ldb = 1 + klb + kub;
     //double* B = new double[ldb*Nx*Ny*3];
-    
+    #pragma omp parallel for
     for (int i = 0; i<Nx*Ny; i++) {
         //first column
         B[i*ldb*3] = 0;
@@ -302,7 +303,7 @@ void ShallowWater::calcFBLAS( double* yn,
     
     //reshape F back to [u;v;h] shape for output
     cblas_dcopy(3*Nx*Ny,F,1,workspace,1);
-    
+    #pragma omp parallel for
     for (int i = 0; i<Nx*Ny; i++) {
         //u
         F[i] = workspace[i*3];
@@ -325,7 +326,6 @@ void ShallowWater::derXBlas(double* data, double* derivative, double* derMat,dou
     int kl = 3;
     int ku = 3;
     int lda = 1 + kl + ku;
-    
     for (int yrow = 0; yrow<Ny; yrow++) {
         //first three (padding)
         vect[0] = data[(Ny-3)*Ny + yrow];//pad with third to last
@@ -439,7 +439,7 @@ void ShallowWater::TimeIntBlas() {
     
     int paddedLenX = Nx + 6;
     double* derXMat = new double[lda*paddedLenX]; //dimensions corresponding to largest grid dimension
-    
+    #pragma omp parallel for
     for (int i = 0; i<paddedLenX;i++) {
         derXMat[i*lda]   = -0.0167;     //c7
         derXMat[i*lda+1] =  0.1500;     //c6
@@ -452,6 +452,7 @@ void ShallowWater::TimeIntBlas() {
     
     int paddedLenY = Ny + 6;
     double* derYMat = new double[lda*paddedLenY]; //dimensions corresponding to largest grid dimension
+    #pragma omp parallel for
     for (int i = 0; i<paddedLenY;i++) {
         derYMat[i*lda]   = -0.0167;     //c7
         derYMat[i*lda+1] =  0.1500;     //c6
@@ -462,8 +463,7 @@ void ShallowWater::TimeIntBlas() {
         derYMat[i*lda+6] =  0.0167;     //c1
     }
     
-    // time propagation (for or while)
-    int counter = 0;
+    // time propagation
     for (double time = 0; time < T; time += dt) {
         
         
@@ -479,15 +479,12 @@ void ShallowWater::TimeIntBlas() {
                     temp,
                     derXMat,derYMat,
                     vect,ans);           
-        //for (int i = 0;i<3*Nx*Ny;i++) {
-        //    allKs[i] = temp[i];
-        //}
         
-        cblas_dcopy(3*Nx*Ny,temp,1,allKs,1);
-        
-        
-        //k2 = calcF(yn + dt*k1/2);
+        #pragma omp parallel for
         for (int i = 0;i<3*Nx*Ny;i++) {
+            allKs[i] = temp[i];
+        
+            //k2 = calcF(yn + dt*k1/2);
             temp[i] = yn[i] + (dt/2) * temp[i];
         }
         calcFBLAS(  temp,
@@ -500,13 +497,13 @@ void ShallowWater::TimeIntBlas() {
                     temp,
                     derXMat,derYMat,
                     vect,ans); 
+        #pragma omp parallel for
         for (int i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += 2*temp[i];
-        }
         
         
-        //k3 = calcF(yn + dt*k2/2);
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        
+            //k3 = calcF(yn + dt*k2/2);
             temp[i] = yn[i] + (dt/2)*temp[i];
         }
         calcFBLAS(  temp,
@@ -520,13 +517,12 @@ void ShallowWater::TimeIntBlas() {
                     derXMat,derYMat,
                     vect,ans);  
                 
-        
+        #pragma omp parallel for
         for (int i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += 2*temp[i];
-        }
         
-        //k4 = calcF(yn + dt*k3);
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        
+            //k4 = calcF(yn + dt*k3);
             temp[i] = yn[i] + dt*temp[i];
         }
         calcFBLAS(  temp,
@@ -539,16 +535,15 @@ void ShallowWater::TimeIntBlas() {
                     temp,
                     derXMat,derYMat,
                     vect,ans); 
-        
+        #pragma omp parallel for
         for (int i = 0;i<3*Nx*Ny;i++) {
             allKs[i] += temp[i];
-        }
         
-        //yn = yn + (1/6) * (k1 + 2*k2 + 2*k3 + k4)*dt;
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        
+            //yn = yn + (1/6) * (k1 + 2*k2 + 2*k3 + k4)*dt;
             yn[i] += (dt/6)*allKs[i];
         }    
-        counter++;
+        
     }
     cout << "\tFinished iteration " << T/dt << "/" << T/dt << endl;
     
@@ -596,50 +591,7 @@ void ShallowWater::TimeIntegrate() {
         };
         
 
-//double stencil[7]; //declared in ShallowWater.h
 
-    
-void ShallowWater::multVectByConst(const int& n,double* vect1,const double& constVal,double* ans,const char& HOW) {
-        /*
-         HOW: 'A' : add to answer
-              'R' : replace answer (destroy previous values)
-          */
-        if (HOW == 'R') {
-            for (int i=0; i<n; i++) {
-                ans[i] = constVal*vect1[i];
-            }
-        } else if (HOW == 'A') {
-            for (int i=0; i<n; i++) {
-                ans[i] += constVal*vect1[i];
-            }
-        } else { //raiseAssertion
-            cout << "Error: Option < " << HOW << "> not Implemented, only add (A) or replace (R)" << endl;
-        }
-    };
-    
-void ShallowWater::addTwoVectors(const int& n,double* vect1,double* vect2,const double& sign,double* ans) {
-        for (int i = 0; i<n; i++) {
-            ans[i] = vect1[i] + sign * vect2[i];
-        }
-    };
-    
-void ShallowWater::multVectByVect(const int& n,double* vect1,double* vect2,const double& sign,double* ans,const char& HOW) {
-        /*
-         HOW: 'A' : add to answer
-              'R' : replace answer (destroy previous values)
-          */
-        if (HOW == 'R') {
-            for (int i=0; i<n; i++) {
-                ans[i] = sign*vect1[i]*vect1[i];
-            }
-        } else if (HOW == 'A') {
-            for (int i=0; i<n; i++) {
-                ans[i] += sign*vect1[i]*vect1[i];
-            }
-        } else { //raiseAssertion
-            cout << "ERROR: Option < " << HOW << "> not Implemented, only add (A) or replace (R)" << endl;
-        }
-    };
     
 void ShallowWater::calcFFor( double* yn,
                 double* dudx,double* dudy,
