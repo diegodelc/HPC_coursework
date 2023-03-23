@@ -879,26 +879,62 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
 void ShallowWater::derYFor(const double* data, double* derivative) {
         for (int xcol = 0; xcol<Nx; xcol++) {
             //0th
+            derivative[xcol*Ny] =  data[(xcol)*Ny+Ny-3] * (-0.0167) +
+                                   data[(xcol)*Ny+Ny-2] * 0.1500 +
+                                   data[(xcol)*Ny+Ny-1] * (-0.7500) +
+                                   data[(xcol)*Ny+1] * 0.7500 +
+                                   data[(xcol)*Ny+2] * (-0.1500) +
+                                   data[(xcol)*Ny+3]    * 0.0167;
             //1st
+            derivative[xcol*Ny+1] =    data[(xcol)*Ny+Ny-2] * (-0.0167) +
+                                       data[(xcol)*Ny+Ny-1] * 0.1500 +
+                                       data[(xcol)*Ny+0] * (-0.7500) +
+                                       data[(xcol)*Ny+2] * 0.7500 +
+                                       data[(xcol)*Ny+3] * (-0.1500) +
+                                       data[(xcol)*Ny+4]    * 0.0167;
             //2nd
+            derivative[xcol*Ny+2] =    data[(xcol)*Ny+Ny-1] * (-0.0167) +
+                                       data[(xcol)*Ny+0] * 0.1500 +
+                                       data[(xcol)*Ny+1] * (-0.7500) +
+                                       data[(xcol)*Ny+3] * 0.7500 +
+                                       data[(xcol)*Ny+4] * (-0.1500) +
+                                       data[(xcol)*Ny+5]    * 0.0167;
             
             //last
+            derivative[xcol*Ny+Ny-1] = data[(xcol)*Ny+Ny-4] * (-0.0167) +
+                                       data[(xcol)*Ny+Ny-3] * 0.1500 +
+                                       data[(xcol)*Ny+Ny-2] * (-0.7500) +
+                                       data[(xcol)*Ny+0] * 0.7500 +
+                                       data[(xcol)*Ny+1] * (-0.1500) +
+                                       data[(xcol)*Ny+2]    * 0.0167;
             //second to last
+            derivative[xcol*Ny+Ny-2] = data[(xcol)*Ny+Ny-5] * (-0.0167) +
+                                       data[(xcol)*Ny+Ny-4] * 0.1500 +
+                                       data[(xcol)*Ny+Ny-3] * (-0.7500) +
+                                       data[(xcol)*Ny+Ny-1] * 0.7500 +
+                                       data[(xcol)*Ny+0] * (-0.1500) +
+                                       data[(xcol)*Ny+1]    * 0.0167;
             //third to last
+            derivative[xcol*Ny+Ny-3] = data[(xcol)*Ny+Ny-6] * (-0.0167) +
+                                       data[(xcol)*Ny+Ny-5] * 0.1500 +
+                                       data[(xcol)*Ny+Ny-4] * (-0.7500) +
+                                       data[(xcol)*Ny+Ny-2] * 0.7500 +
+                                       data[(xcol)*Ny+Ny-1] * (-0.1500) +
+                                       data[(xcol)*Ny+0]    * 0.0167;
             
             for (int yrow = 3;yrow<Ny-3;yrow++) {
-                
+                derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1, data+xcol*Ny+yrow-3,1);
             }
         }
     
     
-    
+        /*
     
         double* tempDer = new double[7];
         for (int xcol = 0; xcol < Nx; xcol++) {
             for (int yrow = 0; yrow < Ny; yrow++) {
                 if (3<=yrow && yrow<=Ny-4) {
-                    /*
+                    
                     tempDer[0] = data[xcol*Ny+yrow-3];
                     tempDer[1] = data[xcol*Ny+yrow-2];
                     tempDer[2] = data[xcol*Ny+yrow-1];
@@ -910,7 +946,7 @@ void ShallowWater::derYFor(const double* data, double* derivative) {
                     derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
                     
                     
-                    */
+                    
                     derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1, data+xcol*Ny+yrow-3,1);
                     
                     
@@ -984,5 +1020,6 @@ void ShallowWater::derYFor(const double* data, double* derivative) {
             }
         }
         delete[] tempDer;
+        */
     };
     
