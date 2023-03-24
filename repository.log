@@ -1,0 +1,990 @@
+commit 4ab96d4a45f45d4a44e1350a54f31bd117d56b60
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 24 22:18:40 2023 +0000
+
+    final commit
+
+A	contours/ic1.jpg
+A	contours/ic2.jpg
+A	contours/ic3.jpg
+A	contours/ic4.jpg
+M	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/serial_implementation/output.txt
+A	parallel_scaling.jpg
+A	parallel_scaling.m
+M	plotting_outputs.m
+M	testing_dt_convergence.m
+
+commit 1ede1f050bdc4daa9d6df4b8b204cf8615ab7dbf
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 24 21:48:53 2023 +0000
+
+    changed derivatives so first and las points in grid are the same
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/output.txt
+
+commit ba9de12b95a70ac7680df90d6eef5d44c06b75aa
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 24 20:56:42 2023 +0000
+
+    fixed everything?
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+
+commit a0fd83f407ac9391ddf9e3a34a2cf158edf8b06e
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 24 18:23:32 2023 +0000
+
+    just in case
+
+M	cw_workspace/serial_implementation/Makefile
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+M	cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32
+M	cw_workspace/serial_implementation/testing.er/data.frameinfo
+M	cw_workspace/serial_implementation/testing.er/dyntext
+M	cw_workspace/serial_implementation/testing.er/er_archive.log
+M	cw_workspace/serial_implementation/testing.er/log.xml
+M	cw_workspace/serial_implementation/testing.er/map.xml
+M	cw_workspace/serial_implementation/testing.er/overview
+M	cw_workspace/serial_implementation/testing.er/profile
+
+commit ec3c4d2324f35ef8c0f7cbf1a6104b5413a60e85
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 24 14:59:07 2023 +0000
+
+    trying to debug
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+
+commit 1bd780acfd5d94239746ef950d852ef718346260
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 24 13:43:49 2023 +0000
+
+    removing prints
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.h
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/main.o
+
+commit ef8d9f345decda9f0b8a5628e644ac840bf9eba5
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 24 13:14:19 2023 +0000
+
+    lifting indexes from loops
+
+M	cw_workspace/serial_implementation/Makefile
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.h
+A	cw_workspace/serial_implementation/ShallowWater.o
+A	cw_workspace/serial_implementation/main
+A	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+M	cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32
+M	cw_workspace/serial_implementation/testing.er/data.frameinfo
+M	cw_workspace/serial_implementation/testing.er/dyntext
+M	cw_workspace/serial_implementation/testing.er/er_archive.log
+M	cw_workspace/serial_implementation/testing.er/log.xml
+M	cw_workspace/serial_implementation/testing.er/map.xml
+M	cw_workspace/serial_implementation/testing.er/overview
+M	cw_workspace/serial_implementation/testing.er/profile
+
+commit a98e67eadd57664ce4ed721c69f2e5f2d4842121
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 24 10:42:06 2023 +0000
+
+    going to change derivatives... drumroll
+
+D	cw_workspace/serial_implementation/ShallowWater.o
+D	cw_workspace/serial_implementation/main
+D	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+
+commit 81c7f0d22645c5f89803a001796540410254f5b1
+Merge: 343b7e1 bdc9b42
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 24 10:22:52 2023 +0000
+
+    small changes to time loops
+
+commit 343b7e17b04a1233e93f4b9e72ee5fa27ec4f5da
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 24 10:02:54 2023 +0000
+
+    pre-merge
+
+M	cw_workspace/serial_implementation/Makefile
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+M	cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32
+M	cw_workspace/serial_implementation/testing.er/data.frameinfo
+M	cw_workspace/serial_implementation/testing.er/dyntext
+M	cw_workspace/serial_implementation/testing.er/er_archive.log
+M	cw_workspace/serial_implementation/testing.er/log.xml
+M	cw_workspace/serial_implementation/testing.er/map.xml
+M	cw_workspace/serial_implementation/testing.er/overview
+M	cw_workspace/serial_implementation/testing.er/profile
+
+commit bdc9b42c1031a612ea7c52af1da543821ed25e8a
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 21:38:56 2023 +0000
+
+    some basic parallelisation to blas
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.h
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+A	cw_workspace/serial_implementation/testing.er/archives/libgomp.so.1.0.0_dnWuQRcLhw9
+M	cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32
+M	cw_workspace/serial_implementation/testing.er/data.frameinfo
+M	cw_workspace/serial_implementation/testing.er/dyntext
+M	cw_workspace/serial_implementation/testing.er/er_archive.log
+M	cw_workspace/serial_implementation/testing.er/log.xml
+M	cw_workspace/serial_implementation/testing.er/map.xml
+M	cw_workspace/serial_implementation/testing.er/overview
+M	cw_workspace/serial_implementation/testing.er/profile
+
+commit 4e183480f1a3e7376a943b9470cbe0037f25f68a
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 21:02:18 2023 +0000
+
+    starting blas parallelisation
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+
+commit 3c4e306f7422502d5cfe2b32c6d5ede4c1e13210
+Merge: 09ee09b be45601
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 20:40:57 2023 +0000
+
+    parallel scaling
+
+commit be45601cceff29aa7e1c00421e86af9eeebc61f7
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 19:09:59 2023 +0000
+
+    for and blas diverge ...
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+
+commit 4879e37a70d86eb6b663241c840e16807a3b232d
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 18:36:53 2023 +0000
+
+    ifs removed from derivatives
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32
+M	cw_workspace/serial_implementation/testing.er/data.frameinfo
+M	cw_workspace/serial_implementation/testing.er/dyntext
+M	cw_workspace/serial_implementation/testing.er/er_archive.log
+M	cw_workspace/serial_implementation/testing.er/log.xml
+M	cw_workspace/serial_implementation/testing.er/map.xml
+M	cw_workspace/serial_implementation/testing.er/overview
+M	cw_workspace/serial_implementation/testing.er/profile
+
+commit 6a7787aa6e1f9f3adb6db980d870e80e6f99d289
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 18:00:02 2023 +0000
+
+    removing ifs from derYFor
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+
+commit 3207acdbcbd2a06df146403be8bffc58a3a48c0d
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 17:50:19 2023 +0000
+
+    more optimisations
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+
+commit eb889457b8197fa560a8210932573854b15bb32b
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 17:00:34 2023 +0000
+
+    some optimisations
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.h
+A	cw_workspace/serial_implementation/ShallowWater.o
+A	cw_workspace/serial_implementation/main
+A	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+M	cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32
+M	cw_workspace/serial_implementation/testing.er/data.frameinfo
+M	cw_workspace/serial_implementation/testing.er/dyntext
+M	cw_workspace/serial_implementation/testing.er/er_archive.log
+M	cw_workspace/serial_implementation/testing.er/log.xml
+M	cw_workspace/serial_implementation/testing.er/map.xml
+M	cw_workspace/serial_implementation/testing.er/overview
+M	cw_workspace/serial_implementation/testing.er/profile
+
+commit 09ee09b8de3a9196ad207032ba8d546faf05b029
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 15:43:33 2023 +0000
+
+    stuff
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/output.txt
+
+commit cbfad2fd429d8d07a944ce76b1b12ca57d322733
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 12:33:00 2023 +0000
+
+    more parallelisation tests
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/output.txt
+
+commit 535057c303dc9ae2b9816048e64649d41324cb9d
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 03:38:49 2023 +0000
+
+    logging off
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/output.txt
+
+commit b19c00912925560435a0ebfd282f01f151494afe
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 03:09:13 2023 +0000
+
+    sections to calcF, reduces runtime from 5 to 2 on 3 threads
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/output.txt
+
+commit d0212e9909dc110155d75e3fce3c45e5e5220e04
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 01:41:40 2023 +0000
+
+    running slower when parallel, might be doing the same stuff on each thred, maybe need a reduction clause??
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/output.txt
+
+commit 01bfdc6fb7405b5d3878f9408946b729ef5d2382
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 01:33:52 2023 +0000
+
+    first parallelisations
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.h
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/main.o
+
+commit 517728a1f42d0b9cfc54413e83f08de01249c293
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 01:11:29 2023 +0000
+
+    starting parallel stuff
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+A	cw_workspace/serial_implementation/ShallowWater.o
+A	cw_workspace/serial_implementation/main
+A	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+
+commit e10722902e1b74fdcb30f259ded023d36bc4819b
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 23 00:47:38 2023 +0000
+
+    just in case
+
+D	cw_workspace/serial_implementation/ShallowWater.o
+D	cw_workspace/serial_implementation/main
+D	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+
+commit 2fa26ff4e29d29e82fc24e9a48705a9d9066feca
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Wed Mar 22 22:26:25 2023 +0000
+
+    ran sims at different dts, probed and writing script to see RK4 convergence
+
+M	cw_workspace/serial_implementation/Makefile
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+M	cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32
+M	cw_workspace/serial_implementation/testing.er/data.frameinfo
+M	cw_workspace/serial_implementation/testing.er/dyntext
+M	cw_workspace/serial_implementation/testing.er/er_archive.log
+M	cw_workspace/serial_implementation/testing.er/log.xml
+M	cw_workspace/serial_implementation/testing.er/map.xml
+M	cw_workspace/serial_implementation/testing.er/overview
+M	cw_workspace/serial_implementation/testing.er/profile
+A	testing_dt_convergence.m
+
+commit 8452b8e7884495ddea10e4e58e3dfad332f384b3
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Wed Mar 22 21:53:13 2023 +0000
+
+    just in case
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+M	cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32
+M	cw_workspace/serial_implementation/testing.er/data.frameinfo
+M	cw_workspace/serial_implementation/testing.er/dyntext
+M	cw_workspace/serial_implementation/testing.er/er_archive.log
+M	cw_workspace/serial_implementation/testing.er/log.xml
+M	cw_workspace/serial_implementation/testing.er/map.xml
+M	cw_workspace/serial_implementation/testing.er/overview
+M	cw_workspace/serial_implementation/testing.er/profile
+
+commit 4a81f36b03d19b571bf40f06eed05704e25f9f4c
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Wed Mar 22 21:30:12 2023 +0000
+
+    large commit, derivatives using blas added, both working, can optimise to use same matrix or derX and derY
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/.codelite/cw_workspace.session
+D	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.h
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+M	cw_workspace/serial_implementation/serial_implementation.mk
+M	cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32
+M	cw_workspace/serial_implementation/testing.er/data.frameinfo
+M	cw_workspace/serial_implementation/testing.er/dyntext
+M	cw_workspace/serial_implementation/testing.er/er_archive.log
+M	cw_workspace/serial_implementation/testing.er/log.xml
+M	cw_workspace/serial_implementation/testing.er/map.xml
+M	cw_workspace/serial_implementation/testing.er/overview
+M	cw_workspace/serial_implementation/testing.er/profile
+
+commit 876fd547f9ee23dd1b879d8479e89cdac0b55053
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Wed Mar 22 12:59:23 2023 +0000
+
+    small optimizations to derX
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/output.txt
+M	cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32
+M	cw_workspace/serial_implementation/testing.er/data.frameinfo
+M	cw_workspace/serial_implementation/testing.er/dyntext
+M	cw_workspace/serial_implementation/testing.er/er_archive.log
+M	cw_workspace/serial_implementation/testing.er/log.xml
+M	cw_workspace/serial_implementation/testing.er/map.xml
+M	cw_workspace/serial_implementation/testing.er/overview
+M	cw_workspace/serial_implementation/testing.er/profile
+
+commit 4bde74e98b220edb1ed42eb22889a4757d81c159
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 18:55:55 2023 +0000
+
+    logging off
+
+A	cw_workspace/serial_implementation/ShallowWater.o
+A	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+A	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+
+commit fc819796896bf00c482c9adb21061168c4d34d97
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 18:32:07 2023 +0000
+
+    meh 2
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+D	cw_workspace/output.txt
+M	plotting_outputs.m
+
+commit 0973d3b9fd86fbd7a1f0b5947a3d6ee2aa244652
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 18:27:59 2023 +0000
+
+    slight change to plotting script in MATLAB
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+D	cw_workspace/serial_implementation/ShallowWater.o
+D	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+D	cw_workspace/serial_implementation/main.o
+
+commit a255bf3980876392c52d6ca273a266f0517e6642
+Author: diegodelc <80914705+diegodelc@users.noreply.github.com>
+Date:   Tue Mar 21 18:25:23 2023 +0000
+
+    Update README.md
+
+M	README.md
+
+commit 5deaeb0f802b45bee64a317214a808e7f00d3ff0
+Author: diegodelc <80914705+diegodelc@users.noreply.github.com>
+Date:   Tue Mar 21 18:25:01 2023 +0000
+
+    Update README.md
+
+M	README.md
+
+commit 2fa9152258dc990cf5dc465af39d26f965aaa5cb
+Author: diegodelc <80914705+diegodelc@users.noreply.github.com>
+Date:   Tue Mar 21 18:23:31 2023 +0000
+
+    Update README.md
+
+M	README.md
+
+commit 95695833abfa44d9d3713137ea2bbb3215336a5b
+Author: diegodelc <80914705+diegodelc@users.noreply.github.com>
+Date:   Tue Mar 21 18:20:19 2023 +0000
+
+    Create README.md
+
+A	README.md
+
+commit a31d876c97a687bb924c979034fac388205c9ee6
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 18:00:30 2023 +0000
+
+    added verbose functionality
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.o
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+
+commit 10e79713febe5e920f0c7ee2c03d8125a048d414
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 17:49:51 2023 +0000
+
+    iputs were fine, MATLAB was reading the wrong output.txt filegit add .
+
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+
+commit 9e935938aed029b55354afe71618c74f5a9a1dc4
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 17:38:28 2023 +0000
+
+    something wrong with inputs
+
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+A	cw_workspace/serial_implementation/ShallowWater.o
+A	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+A	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+M	cw_workspace/serial_implementation/testing.er/data.frameinfo
+M	cw_workspace/serial_implementation/testing.er/dyntext
+M	cw_workspace/serial_implementation/testing.er/er_archive.log
+M	cw_workspace/serial_implementation/testing.er/log.xml
+M	cw_workspace/serial_implementation/testing.er/map.xml
+M	cw_workspace/serial_implementation/testing.er/overview
+M	cw_workspace/serial_implementation/testing.er/profile
+
+commit b5862bc9b7a147f57ba408a37bc60961f8331ed4
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 17:22:59 2023 +0000
+
+    makefile now includes profiler
+
+M	cw_workspace/serial_implementation/Makefile
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/output.txt
+A	cw_workspace/serial_implementation/testing.er/archives/ld-2.31.so_XLwlkF_Wwof
+A	cw_workspace/serial_implementation/testing.er/archives/libatlas.so.3.10.3_dnWuQRcLhw9
+A	cw_workspace/serial_implementation/testing.er/archives/libblas.so.3.10.3_IiHvjNbM48a
+A	cw_workspace/serial_implementation/testing.er/archives/libboost_program_options.so.1.74.0_dnWuQRcLhw9
+A	cw_workspace/serial_implementation/testing.er/archives/libc-2.31.so_XLwlkF_Wwof
+A	cw_workspace/serial_implementation/testing.er/archives/libcollector.so_kN_xj2QRtH5
+A	cw_workspace/serial_implementation/testing.er/archives/libdl-2.31.so_XLwlkF_Wwof
+A	cw_workspace/serial_implementation/testing.er/archives/libgcc_s.so.1_XLwlkF_Wwof
+A	cw_workspace/serial_implementation/testing.er/archives/libgfortran.so.5.0.0_dnWuQRcLhw9
+A	cw_workspace/serial_implementation/testing.er/archives/libm-2.31.so_XLwlkF_Wwof
+A	cw_workspace/serial_implementation/testing.er/archives/libpthread-2.31.so_XLwlkF_Wwof
+A	cw_workspace/serial_implementation/testing.er/archives/libquadmath.so.0.0.0_dnWuQRcLhw9
+A	cw_workspace/serial_implementation/testing.er/archives/librt-2.31.so_XLwlkF_Wwof
+A	cw_workspace/serial_implementation/testing.er/archives/libstdc++.so.6.0.28_dnWuQRcLhw9
+A	cw_workspace/serial_implementation/testing.er/archives/main_g_QSGVGdK32
+A	cw_workspace/serial_implementation/testing.er/data.frameinfo
+A	cw_workspace/serial_implementation/testing.er/dyntext
+A	cw_workspace/serial_implementation/testing.er/er_archive.log
+A	cw_workspace/serial_implementation/testing.er/jclasses
+A	cw_workspace/serial_implementation/testing.er/log.xml
+A	cw_workspace/serial_implementation/testing.er/map.xml
+A	cw_workspace/serial_implementation/testing.er/overview
+A	cw_workspace/serial_implementation/testing.er/profile
+
+commit 17525fec7f94c2202b787b8e5bcad02af05926a2
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 16:50:09 2023 +0000
+
+    command line arguments work, implemented two more than required in the assignement document
+
+D	cw_workspace/serial_implementation/ShallowWater.o
+D	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+D	cw_workspace/serial_implementation/main.o
+
+commit 7fa2285c19d167b14e7eccf2f7b264d470e6e985
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 16:27:44 2023 +0000
+
+    command line arguments work
+
+M	cw_workspace/serial_implementation/Makefile
+M	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/main.o
+M	cw_workspace/serial_implementation/output.txt
+
+commit aeac71cf2dbceee512e10ded6fdd5c157bb69073
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 16:02:10 2023 +0000
+
+    makefile works, now need to add command line arguments
+
+M	cw_workspace/serial_implementation/Makefile
+A	cw_workspace/serial_implementation/ShallowWater.o
+A	cw_workspace/serial_implementation/main
+M	cw_workspace/serial_implementation/main.cpp
+A	cw_workspace/serial_implementation/main.o
+A	cw_workspace/serial_implementation/output.txt
+
+commit 7f5d07a5257c2aa25b73143a2407af710b0ce76e
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 15:43:30 2023 +0000
+
+    first version of makefile
+
+A	cw_workspace/serial_implementation/Makefile
+M	cw_workspace/serial_implementation/main.cpp
+
+commit a37a2ad0f32381b65c3008cad4eddf061fecc004
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Tue Mar 21 11:36:52 2023 +0000
+
+    adding some prints
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/serial_implementation.mk
+
+commit 262fc66161f34190939c6002eec3a83c1a63e2a3
+Author: diegodelc <diegodelcastillo2001@gmail.com>
+Date:   Mon Mar 20 03:31:36 2023 +0100
+
+    local changes in matlab
+
+M	testing2.m
+A	testing_matrix.m
+
+commit 57360f9e739b9d948a39025c5f002ecb8a4ecbed
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Mon Mar 20 02:12:38 2023 +0000
+
+    blas works
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/main.cpp
+
+commit 3e7225c72e9285ff9b5595ee389bc00e26a15e10
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Mon Mar 20 01:52:20 2023 +0000
+
+    some changes to blas, still exploding
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/main.cpp
+
+commit 98a43ab86ef355f1b7e3a62933b4da70ad242805
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Mon Mar 20 01:01:31 2023 +0000
+
+    the blas implementation is blowing up for some reason
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.h
+M	cw_workspace/serial_implementation/main.cpp
+
+commit 0aa75cd83d0439c10b1ea2134f1566ee2f060e4c
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Mon Mar 20 00:13:35 2023 +0000
+
+    blas implementation almost done
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.h
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/serial_implementation.mk
+
+commit 3e7e8507445b6247eb939e19b9015871aebf1b38
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 17 19:40:57 2023 +0000
+
+    fixed previous change
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+M	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+
+commit 950bbed31ec1596193b852b010344568390a2ce5
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 17 19:39:00 2023 +0000
+
+    optimisation for calculating derivatives
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.h
+
+commit 3d796c97ee0e9297ebea2d7c7f14cba9c7e51bf6
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 17 18:29:02 2023 +0000
+
+    cleaning up
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/ShallowWater.cpp
+M	cw_workspace/serial_implementation/ShallowWater.h
+M	cw_workspace/serial_implementation/main.cpp
+
+commit d7fd2f5bd7ecc576014c8dc9648fd6937a4898a4
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 17 18:07:44 2023 +0000
+
+    header and cpp files created for class
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/ObjectsList.txt
+A	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o
+A	cw_workspace/build-Debug/serial_implementation/ShallowWater.cpp.o.d
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o.d
+M	cw_workspace/compile_commands.json
+M	cw_workspace/output.txt
+A	cw_workspace/serial_implementation/ShallowWater.cpp
+A	cw_workspace/serial_implementation/ShallowWater.h
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/serial_implementation.mk
+M	cw_workspace/serial_implementation/serial_implementation.project
+
+commit 5f2954b592a40fc9f34f4ca54c62c8ef9598a55a
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 17 17:37:01 2023 +0000
+
+    matlab plotting done, for loop implementation works correctly for all 4 cases, now onto blas implementation
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/main.cpp
+
+commit 5ec7b3befcb5a6cad137f116aee1e75ea2d86e21
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 17 16:55:56 2023 +0000
+
+    logging off, plotting script not complete
+
+A	plotting_outputs.m
+
+commit 47927e80aa23c181369db9826194638af6d2fd93
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Fri Mar 17 16:44:22 2023 +0000
+
+    I think the for works, let's plot it in matlab
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/serial_implementation.mk
+
+commit 1382b049deaa09bc4e7ad7e204e65d116acc6eac
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 22:17:35 2023 +0000
+
+    getting very wrong values for the derivatives, I think the indexing is wrong here, fix this asap
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/main.cpp
+
+commit 05acd97a3ed3ba451cfa9b74c33a56992f0dd6ca
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 21:03:41 2023 +0000
+
+    first output file created, all zeros for u,v,h probably operating with int and double together!
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+A	cw_workspace/output.txt
+M	cw_workspace/serial_implementation/main.cpp
+
+commit 91fc6fbb6207de6dee61415f3ec92d6d20c2a09a
+Merge: 884b12e 6fc0c80
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 20:34:16 2023 +0000
+
+    Merge branch 'main' of github.com:diegodelc/HPC_coursework
+
+commit 884b12e058968c1bd22bd57a613d1fa2a0eff4be
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 20:34:02 2023 +0000
+
+    looks like for look works, now export to file and make other files in which to build class
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/serial_implementation/main.cpp
+
+commit 6fc0c8068b0c0679b5d859070fd44331a66499ba
+Merge: 6b38e2b 8a90a53
+Author: diegodelc <diegodelcastillo2001@gmail.com>
+Date:   Thu Mar 16 19:31:06 2023 +0000
+
+    Merge branch 'main' of https://github.com/diegodelc/HPC_coursework
+
+commit 6b38e2b93a2bf646e7c2eaba1c4a73e27fa439f4
+Author: diegodelc <diegodelcastillo2001@gmail.com>
+Date:   Thu Mar 16 19:30:45 2023 +0000
+
+    adding a live script
+
+A	implementation_in_matlab.mlx
+
+commit 8a90a53b539a320cb5dd09795e9abec3a659f739
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 15:53:19 2023 +0000
+
+    pending change in calcF, described in comments in code line 198
+
+M	cw_workspace/serial_implementation/main.cpp
+
+commit d2e7102f261455a92ae518c158c4db772c41113c
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 15:26:00 2023 +0000
+
+    calcF works
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/serial_implementation/main.cpp
+
+commit f1be0a066f71a0e99030d9b4e5028a179aeb6415
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 14:44:56 2023 +0000
+
+    nothing major
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/serial_implementation/main.cpp
+
+commit aeb5642571b6b8b5a4bd56f47099d2be3b80756e
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 13:34:50 2023 +0000
+
+    logging off, time loop works now
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/serial_implementation/main.cpp
+
+commit 61db6c4f64380db318416bb22aef09e942e736d3
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 13:06:51 2023 +0000
+
+    something is not working, derivatives are there
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/serial_implementation/main.cpp
+M	cw_workspace/serial_implementation/serial_implementation.mk
+M	cw_workspace/serial_implementation/serial_implementation.project
+
+commit 442030bb133f1e12d6bf0e67b5529e06bcb273dd
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 12:08:38 2023 +0000
+
+    Initial Conditions and constructor built
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+M	cw_workspace/build-Debug/bin/serial_implementation
+M	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+M	cw_workspace/serial_implementation/main.cpp
+
+commit 5618129929e078870cec962f87a357b3b450c2ab
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 10:57:58 2023 +0000
+
+    First cpp file created
+
+M	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+A	cw_workspace/.codelite/cw_workspace.workspace.diego_del_castillo_del_campo
+A	cw_workspace/Makefile
+A	cw_workspace/build-Debug/bin/serial_implementation
+A	cw_workspace/build-Debug/serial_implementation/.d
+A	cw_workspace/build-Debug/serial_implementation/ObjectsList.txt
+A	cw_workspace/build-Debug/serial_implementation/main.cpp.o
+A	cw_workspace/build-Debug/serial_implementation/main.cpp.o.d
+A	cw_workspace/compile_commands.json
+M	cw_workspace/cw_workspace.workspace
+A	cw_workspace/serial_implementation/.clang-format
+A	cw_workspace/serial_implementation/.clangd
+A	cw_workspace/serial_implementation/main.cpp
+A	cw_workspace/serial_implementation/serial_implementation.mk
+A	cw_workspace/serial_implementation/serial_implementation.project
+
+commit a31e2035ee08bed9b161a03dc3d2cb869a8123a6
+Author: Diego del Castillo del Campo <dd519@spitfire.ae.ic.ac.uk>
+Date:   Thu Mar 16 10:56:36 2023 +0000
+
+    creating workspace
+
+A	cw_workspace/.codelite/cw_workspace-diego_del_castillo_del_campo.tags
+A	cw_workspace/.codelite/cw_workspace.session
+A	cw_workspace/.codelite/valgrind.memcheck.supp
+A	cw_workspace/cw_workspace.workspace
+
+commit 2afe3b856e0bee8cfe4aebd1bdcc778fe5750df4
+Author: diegodelc <diegodelcastillo2001@gmail.com>
+Date:   Thu Mar 16 10:28:54 2023 +0000
+
+    testing 2 worksfor all conditions
+
+A	.gitignore
+D	testing1.asv
+M	testing1.m
+A	testing2.m
+
+commit c32bd12827f8c5f68c2c239c26a88e4c133ff41c
+Author: diegodelc <diegodelcastillo2001@gmail.com>
+Date:   Wed Mar 15 11:32:52 2023 +0000
+
+    matlab stuff
+
+A	testing1.asv
+M	testing1.m
+
+commit 9341d49df26363d7b99cdf56515eb03ca48f84fa
+Author: diegodelc <diegodelcastillo2001@gmail.com>
+Date:   Wed Mar 15 10:21:08 2023 +0000
+
+    first commit
+
+A	testing1.m
