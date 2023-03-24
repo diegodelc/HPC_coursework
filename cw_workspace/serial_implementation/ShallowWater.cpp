@@ -94,7 +94,10 @@ void ShallowWater::SetInitialConditions() {
                     
                     for (int y = 0;y<Ny; y++) {
                         yd = (double)y;
-                        yn[Nxy2 + x*Ny + y] = 10 + exp(-((xd-50)*(xd-50) + (yd-50)*(yd-50))/25);
+                        yn[Nxy2 + x*Ny + y] = 10 + exp(-(
+                                                        (xd-50)*(xd-50) 
+                                                      + (yd-50)*(yd-50)
+                                                        )/25);
                         //ydouble++;
                     }
                     //xdouble++;
@@ -107,7 +110,8 @@ void ShallowWater::SetInitialConditions() {
                 //ydouble = 0;
                     for (int y = 0;y<Ny; y++) {
                         yd = (double)y;
-                        yn[Nxy2 + x*Ny + y] = 10 + exp(-((xd-25)*(xd-25) + (yd-25)*(yd-25))/25) + exp(-((xd-75)*(xd-75)+ (yd-75)*(yd-75) )/25);
+                        yn[Nxy2 + x*Ny + y] = 10    + exp(-((xd-25)*(xd-25) + (yd-25)*(yd-25))/25) 
+                                                    + exp(-((xd-75)*(xd-75) + (yd-75)*(yd-75) )/25);
                         //ydouble++;
                     }
                     //xdouble++;
@@ -253,26 +257,27 @@ void ShallowWater::calcFBLAS( double* yn,
     derYBlas(yn,dudy,derYMat,vect,ans);
     
     
-    derXBlas(yn+Nx*Ny,dvdx,derXMat,vect,ans);
-    derYBlas(yn+Nx*Ny,dvdy,derYMat,vect,ans);
+    derXBlas(yn+Nxy,dvdx,derXMat,vect,ans);
+    derYBlas(yn+Nxy,dvdy,derYMat,vect,ans);
     
-    derXBlas(yn+2*Nx*Ny,dhdx,derXMat,vect,ans);
-    derYBlas(yn+2*Nx*Ny,dhdy,derYMat,vect,ans);
+    derXBlas(yn+Nxy2,dhdx,derXMat,vect,ans);
+    derYBlas(yn+Nxy2,dhdy,derYMat,vect,ans);
     
     
     
     //stack derivatives in correct orders
     #pragma omp parallel for
-    for (int i = 0; i<Nx*Ny; i++) {
+    for (int i = 0; i<Nxy; i++) {
+        int index = i*3;
         //stack x derivatives
-        ddx[i*3] = dudx[i];
-        ddx[i*3+1] = dvdx[i];
-        ddx[i*3+2] = dhdx[i];
+        ddx[index] = dudx[i];
+        ddx[index+1] = dvdx[i];
+        ddx[index+2] = dhdx[i];
         
         //stack y derivatives
-        ddy[i*3] = dudy[i];
-        ddy[i*3+1] = dvdy[i];
-        ddy[i*3+2] = dhdy[i];
+        ddy[index] = dudy[i];
+        ddy[index+1] = dvdy[i];
+        ddy[index+2] = dhdy[i];
     };
     
     //build A
@@ -281,27 +286,28 @@ void ShallowWater::calcFBLAS( double* yn,
     int lda = 1 + kla + kua;
     //double* A = new double[lda*Nx*Ny*3];
     #pragma omp parallel for
-    for (int i = 0; i<Nx*Ny; i++) {
+    for (int i = 0; i<Nxy; i++) {
+        int index = i*lda*3;
         //first column
-        A[i*lda*3] = 0;
-        A[i*lda*3+1] = 0;
-        A[i*lda*3+2] = -yn[i];
-        A[i*lda*3+3] = 0;
-        A[i*lda*3+4] = -yn[2*Nx*Ny + i];
+        A[index] = 0;
+        A[index+1] = 0;
+        A[index+2] = -yn[i];
+        A[index+3] = 0;
+        A[index+4] = -yn[2*Nx*Ny + i];
         
         //second column
-        A[i*lda*3+5] = 0;
-        A[i*lda*3+6] = 0;
-        A[i*lda*3+7] = -yn[i];
-        A[i*lda*3+8] = 0;
-        A[i*lda*3+9] = 0;
+        A[index+5] = 0;
+        A[index+6] = 0;
+        A[index+7] = -yn[i];
+        A[index+8] = 0;
+        A[index+9] = 0;
         
         //third column
-        A[i*lda*3+10] = -9.81;
-        A[i*lda*3+11] = 0;
-        A[i*lda*3+12] = -yn[i];
-        A[i*lda*3+13] = 0;
-        A[i*lda*3+14] = 0;
+        A[index+10] = -9.81;
+        A[index+11] = 0;
+        A[index+12] = -yn[i];
+        A[index+13] = 0;
+        A[index+14] = 0;
     }
     
     //build B
@@ -311,20 +317,21 @@ void ShallowWater::calcFBLAS( double* yn,
     //double* B = new double[ldb*Nx*Ny*3];
     #pragma omp parallel for
     for (int i = 0; i<Nx*Ny; i++) {
+        int index = i*ldb*3;
         //first column
-        B[i*ldb*3] = 0;
-        B[i*ldb*3+1] = -yn[Nx*Ny + i];
-        B[i*ldb*3+2] = 0;
+        B[index] = 0;
+        B[index+1] = -yn[Nx*Ny + i];
+        B[index+2] = 0;
         
         //second column
-        B[i*ldb*3+3] = 0;
-        B[i*ldb*3+4] = -yn[Nx*Ny + i];
-        B[i*ldb*3+5] = -yn[2*Nx*Ny + i];
+        B[index+3] = 0;
+        B[index+4] = -yn[Nx*Ny + i];
+        B[index+5] = -yn[2*Nx*Ny + i];
         
         //third column
-        B[i*ldb*3+6] = -9.81;
-        B[i*ldb*3+7] = -yn[Nx*Ny + i];
-        B[i*ldb*3+8] = 0;
+        B[index+6] = -9.81;
+        B[index+7] = -yn[Nx*Ny + i];
+        B[index+8] = 0;
         
     }
     
@@ -337,17 +344,17 @@ void ShallowWater::calcFBLAS( double* yn,
     
     
     //reshape F back to [u;v;h] shape for output
-    cblas_dcopy(3*Nx*Ny,F,1,workspace,1);
+    cblas_dcopy(Nxy3,F,1,workspace,1);
     #pragma omp parallel for
-    for (int i = 0; i<Nx*Ny; i++) {
+    for (int i = 0; i<Nxy; i++) {
         //u
         F[i] = workspace[i*3];
         
         //v
-        F[Nx*Ny + i] = workspace[i*3 + 1];
+        F[Nxy + i] = workspace[i*3 + 1];
         
         //h
-        F[2*Nx*Ny + i] = workspace[i*3 + 2];
+        F[Nxy2 + i] = workspace[i*3 + 2];
     }
     
 }
@@ -440,8 +447,8 @@ void ShallowWater::TimeIntBlas() {
     double* dvdx = new double[Nxy];
     double* dvdy = new double[Nxy];
     
-    double* dhdx = new double[Nx*Ny];
-    double* dhdy = new double[Nx*Ny];
+    double* dhdx = new double[Nxy];
+    double* dhdy = new double[Nxy];
     
     double* ddx = new double[Nxy3];
     double* ddy = new double[Nxy3];
@@ -476,26 +483,29 @@ void ShallowWater::TimeIntBlas() {
     double* derXMat = new double[lda*paddedLenX]; //dimensions corresponding to largest grid dimension
     #pragma omp parallel for
     for (int i = 0; i<paddedLenX;i++) {
-        derXMat[i*lda]   = -0.0167;     //7
-        derXMat[i*lda+1] =  0.1500;     //6
-        derXMat[i*lda+2] = -0.7500;     //5
-        derXMat[i*lda+3] =  0;          //4
-        derXMat[i*lda+4] =  0.7500;     //3
-        derXMat[i*lda+5] = -0.1500;     //2
-        derXMat[i*lda+6] =  0.0167;     //1
+        int index = i*lda;
+        
+        derXMat[index]   = -0.0167;     //7
+        derXMat[index+1] =  0.1500;     //6
+        derXMat[index+2] = -0.7500;     //5
+        derXMat[index+3] =  0;          //4
+        derXMat[index+4] =  0.7500;     //3
+        derXMat[index+5] = -0.1500;     //2
+        derXMat[index+6] =  0.0167;     //1
     }
     
     int paddedLenY = Ny + 6;
     double* derYMat = new double[lda*paddedLenY]; //dimensions corresponding to largest grid dimension
     #pragma omp parallel for
     for (int i = 0; i<paddedLenY;i++) {
-        derYMat[i*lda]   = -0.0167;     //7
-        derYMat[i*lda+1] =  0.1500;     //6
-        derYMat[i*lda+2] = -0.7500;     //5
-        derYMat[i*lda+3] =  0;          //4
-        derYMat[i*lda+4] =  0.7500;     //3
-        derYMat[i*lda+5] = -0.1500;     //2
-        derYMat[i*lda+6] =  0.0167;     //1
+        int index = i*lda;
+        derYMat[index]   = -0.0167;     //7
+        derYMat[index+1] =  0.1500;     //6
+        derYMat[index+2] = -0.7500;     //5
+        derYMat[index+3] =  0;          //4
+        derYMat[index+4] =  0.7500;     //3
+        derYMat[index+5] = -0.1500;     //2
+        derYMat[index+6] =  0.0167;     //1
     }
     
     // time propagation
@@ -691,54 +701,54 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
             //int temp;
             //derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
             //0th
-            derivative[yrow] =      data[(Nx-3)*Ny+yrow] * (-0.0167) +                  
-                                    data[(Nx-2)*Ny+yrow] * 0.1500 +
-                                    data[(Nx-1)*Ny+yrow] * (-0.7500) +
+            derivative[yrow] =      data[(Nx-3)*Ny+yrow] * -0.0167 +               
+                                    data[(Nx-2)*Ny+yrow] *  0.1500 +
+                                    data[(Nx-1)*Ny+yrow] * -0.7500 +
                                     //data[(0)*Ny+yrow] * 0 +
-                                    data[(1)*Ny+yrow]    * 0.7500 +
-                                    data[(2)*Ny+yrow]    * (-0.1500) +
-                                    data[(3)*Ny+yrow]    * 0.0167;
+                                    data[(1)*Ny+yrow]    *  0.7500 +
+                                    data[(2)*Ny+yrow]    * -0.1500 +
+                                    data[(3)*Ny+yrow]    *  0.0167;
             //1st
-            derivative[1*Ny+yrow] = data[(Nx-2)*Ny+yrow] * (-0.0167) +
-                                    data[(Nx-1)*Ny+yrow] * 0.1500 +
-                                    data[(0)*Ny+yrow]    * (-0.7500) +
+            derivative[1*Ny+yrow] = data[(Nx-2)*Ny+yrow] * -0.0167 +
+                                    data[(Nx-1)*Ny+yrow] *  0.1500 +
+                                    data[(0)*Ny+yrow]    * -0.7500 +
                                     //data[(1)*Ny+yrow] * 0 +
-                                    data[(2)*Ny+yrow]    * 0.7500 +
-                                    data[(3)*Ny+yrow]    * (-0.1500) +
-                                    data[(4)*Ny+yrow]    * 0.0167;
+                                    data[(2)*Ny+yrow]    *  0.7500 +
+                                    data[(3)*Ny+yrow]    * -0.1500 +
+                                    data[(4)*Ny+yrow]    *  0.0167;
             //2nd
-            derivative[2*Ny+yrow] = data[(Nx-1)*Ny+yrow] * (-0.0167) +
-                                    data[(0)*Ny+yrow]    * 0.1500 +
-                                    data[(1)*Ny+yrow]    * (-0.7500) +
+            derivative[2*Ny+yrow] = data[(Nx-1)*Ny+yrow] * -0.0167 +
+                                    data[(0)*Ny+yrow]    *  0.1500 +
+                                    data[(1)*Ny+yrow]    * -0.7500 +
                                     //data[(2)*Ny+yrow] * 0 +
-                                    data[(3)*Ny+yrow]    * 0.7500 +
-                                    data[(4)*Ny+yrow]    * (-0.1500) +
-                                    data[(5)*Ny+yrow]    * 0.0167;
+                                    data[(3)*Ny+yrow]    *  0.7500 +
+                                    data[(4)*Ny+yrow]    * -0.1500 +
+                                    data[(5)*Ny+yrow]    *  0.0167;
             
             //last
-            derivative[(Nx-1)*Ny+yrow] =   data[(Nx-4)*Ny+yrow] * (-0.0167) +
-                                           data[(Nx-3)*Ny+yrow] * 0.1500 +
-                                           data[(Nx-2)*Ny+yrow] * (-0.7500) +
+            derivative[(Nx-1)*Ny+yrow] =   data[(Nx-4)*Ny+yrow] * -0.0167 +
+                                           data[(Nx-3)*Ny+yrow] *  0.1500 +
+                                           data[(Nx-2)*Ny+yrow] * -0.7500 +
                                            //data[(Nx-1)*Ny+yrow] * 0 +
-                                           data[(0)*Ny+yrow]    * 0.7500 +
-                                           data[(1)*Ny+yrow]    * (-0.1500) +
-                                           data[(2)*Ny+yrow]    * 0.0167;
+                                           data[(0)*Ny+yrow]    *  0.7500 +
+                                           data[(1)*Ny+yrow]    * -0.1500 +
+                                           data[(2)*Ny+yrow]    *  0.0167;
             //second to last
-            derivative[(Nx-2)*Ny+yrow] =   data[(Nx-5)*Ny+yrow] * (-0.0167) +
-                                           data[(Nx-4)*Ny+yrow] * 0.1500 +
-                                           data[(Nx-3)*Ny+yrow] * (-0.7500) +
+            derivative[(Nx-2)*Ny+yrow] =   data[(Nx-5)*Ny+yrow] * -0.0167 +
+                                           data[(Nx-4)*Ny+yrow] *  0.1500 +
+                                           data[(Nx-3)*Ny+yrow] * -0.7500 +
                                            //data[(Nx-2)*Ny+yrow] * 0 +
-                                           data[(Nx-1)*Ny+yrow] * 0.7500 +
-                                           data[(0)*Ny+yrow]    * (-0.1500) +
-                                           data[(1)*Ny+yrow]    * 0.0167;
+                                           data[(Nx-1)*Ny+yrow] *  0.7500 +
+                                           data[(0)*Ny+yrow]    * -0.1500 +
+                                           data[(1)*Ny+yrow]    *  0.0167;
             //third to last
-            derivative[(Nx-3)*Ny+yrow] =   data[(Nx-6)*Ny+yrow] * (-0.0167) +
-                                           data[(Nx-5)*Ny+yrow] * 0.1500 +
-                                           data[(Nx-4)*Ny+yrow] * (-0.7500) +
+            derivative[(Nx-3)*Ny+yrow] =   data[(Nx-6)*Ny+yrow] * -0.0167 +
+                                           data[(Nx-5)*Ny+yrow] *  0.1500 +
+                                           data[(Nx-4)*Ny+yrow] * -0.7500 +
                                            //data[(Nx-3)*Ny+yrow] * 0 +
-                                           data[(Nx-2)*Ny+yrow] * 0.7500 +
-                                           data[(Nx-1)*Ny+yrow] * (-0.1500) +
-                                           data[(0)*Ny+yrow]    * 0.0167;
+                                           data[(Nx-2)*Ny+yrow] *  0.7500 +
+                                           data[(Nx-1)*Ny+yrow] * -0.1500 +
+                                           data[(0)*Ny+yrow]    *  0.0167;
             
             for (int xcol = 3; xcol < Nx-3; xcol++) {
                 /*
@@ -751,13 +761,13 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
                                                data[temp+Ny+Ny] * (-0.1500) +
                                                data[temp+Ny+Ny+Ny] * 0.0167;
                 */
-                derivative[xcol*Ny+yrow] =     data[(xcol-3)*Ny+yrow] * (-0.0167) +
-                                               data[(xcol-2)*Ny+yrow] * 0.1500 +
-                                               data[(xcol-1)*Ny+yrow] * (-0.7500) +
-                                               //data[(xcol)*Ny+yrow] * (0) +
-                                               data[(xcol+1)*Ny+yrow] * 0.7500 +
-                                               data[(xcol+2)*Ny+yrow] * (-0.1500) +
-                                               data[(xcol+3)*Ny+yrow] * 0.0167;
+                derivative[xcol*Ny+yrow] =     data[(xcol-3)*Ny+yrow] * -0.0167 +
+                                               data[(xcol-2)*Ny+yrow] *  0.1500 +
+                                               data[(xcol-1)*Ny+yrow] * -0.7500 +
+                                               //data[(xcol)*Ny+yrow] * ( 0) +
+                                               data[(xcol+1)*Ny+yrow] *  0.7500 +
+                                               data[(xcol+2)*Ny+yrow] * -0.1500 +
+                                               data[(xcol+3)*Ny+yrow] *  0.0167;
                 
             }                                                         
 
@@ -769,64 +779,64 @@ void ShallowWater::derYFor(const double* data, double* derivative) {
     for (int xcol = 0; xcol<Nx; xcol++) {
             int index = (xcol)*Ny;
             //0th
-            derivative[xcol*Ny] =  data[index+Ny-3] * (-0.0167) +
-                                   data[index+Ny-2] * 0.1500 +
-                                   data[index+Ny-1] * (-0.7500) +
+            derivative[xcol*Ny] =  data[index+Ny-3] * -0.0167 +
+                                   data[index+Ny-2] *  0.1500 +
+                                   data[index+Ny-1] * -0.7500 +
                                    //data[(xcol)*Ny+0] * 0 +
-                                   data[index+1] * 0.7500 +
-                                   data[index+2] * (-0.1500) +
-                                   data[index+3]    * 0.0167;
+                                   data[index+1] *  0.7500 +
+                                   data[index+2] * -0.1500 +
+                                   data[index+3] *  0.0167;
             //1st
-            derivative[xcol*Ny+1] =    data[index+Ny-2] * (-0.0167) +
-                                       data[index+Ny-1] * 0.1500 +
-                                       data[index+0] * (-0.7500) +
+            derivative[xcol*Ny+1] =    data[index+Ny-2] * -0.0167 +
+                                       data[index+Ny-1] *  0.1500 +
+                                       data[index+0]    * -0.7500 +
                                        //data[(xcol)*Ny+1] * 0 +
-                                       data[index+2] * 0.7500 +
-                                       data[index+3] * (-0.1500) +
-                                       data[index+4]    * 0.0167;
+                                       data[index+2] *  0.7500 +
+                                       data[index+3] * -0.1500 +
+                                       data[index+4] *  0.0167;
             //2nd
-            derivative[xcol*Ny+2] =    data[index+Ny-1] * (-0.0167) +
-                                       data[index+0] * 0.1500 +
-                                       data[index+1] * (-0.7500) +
+            derivative[xcol*Ny+2] =    data[index+Ny-1]  * -0.0167 +
+                                       data[index+0]     *  0.1500 +
+                                       data[index+1]     * -0.7500 +
                                        //data[(xcol)*Ny+2] * 0 +
-                                       data[index+3] * 0.7500 +
-                                       data[index+4] * (-0.1500) +
-                                       data[index+5]    * 0.0167;
+                                       data[index+3] *  0.7500 +
+                                       data[index+4] * -0.1500 +
+                                       data[index+5] *  0.0167;
             
             //last
-            derivative[xcol*Ny+Ny-1] = data[index+Ny-4] * (-0.0167) +
-                                       data[index+Ny-3] * 0.1500 +
-                                       data[index+Ny-2] * (-0.7500) +
+            derivative[xcol*Ny+Ny-1] = data[index+Ny-4] * -0.0167 +
+                                       data[index+Ny-3] *  0.1500 +
+                                       data[index+Ny-2] * -0.7500 +
                                        //data[(xcol)*Ny+Ny-1] * 0 +
-                                       data[index+0] * 0.7500 +
-                                       data[index+1] * (-0.1500) +
-                                       data[index+2]    * 0.0167;
+                                       data[index+0] *  0.7500 +
+                                       data[index+1] * -0.1500 +
+                                       data[index+2] *  0.0167;
             //second to last
-            derivative[xcol*Ny+Ny-2] = data[index+Ny-5] * (-0.0167) +
-                                       data[index+Ny-4] * 0.1500 +
-                                       data[index+Ny-3] * (-0.7500) +
+            derivative[xcol*Ny+Ny-2] = data[index+Ny-5] * -0.0167 +
+                                       data[index+Ny-4] *  0.1500 +
+                                       data[index+Ny-3] * -0.7500 +
                                        //data[(xcol)*Ny+Ny-2] * 0 +
-                                       data[index+Ny-1] * 0.7500 +
-                                       data[index+0] * (-0.1500) +
-                                       data[index+1]    * 0.0167;
+                                       data[index+Ny-1] *  0.7500 +
+                                       data[index+0]    * -0.1500 +
+                                       data[index+1]    *  0.0167;
             //third to last
-            derivative[xcol*Ny+Ny-3] = data[index+Ny-6] * (-0.0167) +
-                                       data[index+Ny-5] * 0.1500 +
-                                       data[index+Ny-4] * (-0.7500) +
-                                       //data[(xcol)*Ny+Ny-3] * 0 +
-                                       data[index+Ny-2] * 0.7500 +
-                                       data[index+Ny-1] * (-0.1500) +
-                                       data[index+0]    * 0.0167;
+            derivative[xcol*Ny+Ny-3] = data[index+Ny-6]  * -0.0167 +
+                                       data[index+Ny-5]  *  0.1500 +
+                                       data[index+Ny-4]  * -0.7500 +
+                                       //data[(xcol)*Ny+ 
+                                       data[index+Ny-2]  *  0.7500 +
+                                       data[index+Ny-1]  * -0.1500 +
+                                       data[index+0]     *  0.0167;
             
             for (int yrow = 3;yrow<Ny-3;yrow++) {                
                 
-                derivative[xcol*Ny+yrow] = data[index+yrow-3] * (-0.0167) +
-                                           data[index+yrow-2] * 0.1500 +
-                                           data[index+yrow-1] * (-0.7500) +
-                                           data[index+yrow+1] * 0.7500 +
-                                           data[index+yrow+2] * (-0.1500) +
-                                           data[index+yrow+3]    * 0.0167;
-                
+                derivative[xcol*Ny+yrow] = data[index+yrow-3] * -0.0167 +
+                                           data[index+yrow-2] *  0.1500 +
+                                           data[index+yrow-1] * -0.7500 +
+                                           data[index+yrow+1] *  0.7500 + 
+                                           data[index+yrow+2] * -0.1500 +
+                                           data[index+yrow+3] *  0.0167;  
+                                                                
                 //derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,data+(xcol)*Ny+yrow-3,1);
 
             }
