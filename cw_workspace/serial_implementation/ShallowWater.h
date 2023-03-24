@@ -7,6 +7,9 @@ public:
         int Ny;
         int ic;
         
+        double dtover2;
+        double dtover6;
+        
         double* yn;
         
         int integrationType;
@@ -16,6 +19,10 @@ public:
         double* h;
         
         double dx;
+        
+        int Nxy;
+        int Nxy2;
+        int Nxy3;
         
         ShallowWater(double dt_in,double T_in,
                             int Nx_in,int Ny_in,
@@ -27,6 +34,8 @@ public:
         void TimeIntegrate();
         
 private:
+
+    
     double stencil[7] = {-0.0167, 0.1500, -0.7500, 0, 0.7500, -0.1500, 0.0167}; //somehow declaring this here makes the code much faster (global scope, cache?)
     
     void calcFFor( double* yn,

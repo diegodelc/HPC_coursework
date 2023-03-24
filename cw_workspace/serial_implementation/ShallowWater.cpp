@@ -14,12 +14,17 @@ ShallowWater::ShallowWater(double dt_in,double T_in,
                             int integrationType_in) {
             cout << endl << "Setting parameters: ";
             dt = dt_in;
+            dtover2 = dt/2;
+            dtover6 = dt/6;
             T = T_in;
             Nx = Nx_in;
             Ny = Ny_in;
+            Nxy = Nx*Ny;
+            Nxy2 = 2*Nx*Ny;
+            Nxy3 = 3*Nx*Ny;
             ic = ic_in;
             dx = 1;
-            yn = new double[3*Nx*Ny];
+            yn = new double[Nxy3];
             integrationType = integrationType_in;
             //u = new double[Nx*Ny];
             //v = new double[Nx*Ny];
@@ -37,25 +42,29 @@ void ShallowWater::SetInitialConditions() {
             */
             
             cout << endl << "Setting initial conditions: ";
-            
+            int xNy;
             #pragma omp parallel for
             for (int x = 0;x<Nx; x++) {
+                xNy = x*Ny;
+                
                 for (int y = 0;y<Ny; y++) {
-                    yn[x*Ny + y] = 0; //u
-                    yn[Nx*Ny + x*Ny + y] = 0; //v
+                    yn[xNy + y] = 0; //u
+                    yn[Nxy + x*Ny + y] = 0; //v
                 }
             }
             
 
-            
+            double xd;
+            double yd;
             
             if (ic == 1) {
                 #pragma omp parallel for
                 for (int x = 0;x<Nx; x++) {
-                    double xd = (double)x;
+                    xd = (double)x;
+                    xNy = x*Ny;
                     //ydouble = 0;
                     for (int y = 0;y<Ny; y++) {
-                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-(xd-50)*(xd-50)/25);
+                        yn[Nxy2 + xNy + y] = 10 + exp(-(xd-50)*(xd-50)/25);
                         //ydouble++;
                     }
                     //xdouble++;
@@ -63,10 +72,10 @@ void ShallowWater::SetInitialConditions() {
             } else if (ic == 2) {
                 #pragma omp parallel for
                 for (int y = 0;y<Ny; y++) {
-                    double yd = (double)y;
+                    yd = (double)y;
                     //ydouble = 0;
                     for (int x = 0;x<Nx; x++) {
-                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-(yd-50)*(yd-50)/25);
+                        yn[Nxy2 + x*Ny + y] = 10 + exp(-(yd-50)*(yd-50)/25);
                         //ydouble++;
                     }
                     //xdouble++;
@@ -74,11 +83,11 @@ void ShallowWater::SetInitialConditions() {
             } else if (ic == 3) {
                 #pragma omp parallel for
                 for (int x = 0;x<Nx; x++) {
-                    double xd = (double)x;
-                    //ydouble = 0;
+                    xd = (double)x;
+                    xNy = x*Ny;
                     for (int y = 0;y<Ny; y++) {
-                        double yd = (double)y;
-                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-((xd-50)*(xd-50) + (yd-50)*(yd-50))/25);
+                        yd = (double)y;
+                        yn[Nxy2 + xNy + y] = 10 + exp(-((xd-50)*(xd-50) + (yd-50)*(yd-50))/25);
                         //ydouble++;
                     }
                     //xdouble++;
@@ -86,11 +95,12 @@ void ShallowWater::SetInitialConditions() {
             } else if (ic == 4) {
                 #pragma omp parallel for
                 for (int x = 0;x<Nx; x++) {
-                    double xd = (double)x;
+                    xd = (double)x;
+                    xNy = x*Ny;
                 //ydouble = 0;
                     for (int y = 0;y<Ny; y++) {
-                        double yd = (double)y;
-                        yn[2*Nx*Ny + x*Ny + y] = 10 + exp(-((xd-25)*(xd-25) + (yd-25)*(yd-25))/25) + exp(-((xd-75)*(xd-75)+ (yd-75)*(yd-75) )/25);
+                        yd = (double)y;
+                        yn[Nxy2 + xNy + y] = 10 + exp(-((xd-25)*(xd-25) + (yd-25)*(yd-25))/25) + exp(-((xd-75)*(xd-75)+ (yd-75)*(yd-75) )/25);
                         //ydouble++;
                     }
                     //xdouble++;
@@ -103,22 +113,29 @@ void ShallowWater::SetInitialConditions() {
         };
         
 void ShallowWater::TimeIntFor() {
-    double* dudx = new double[Nx*Ny];
-    double* dudy = new double[Nx*Ny];
+    double* dudx = new double[Nxy];
+    double* dudy = new double[Nxy];
     
-    double* dvdx = new double[Nx*Ny];
-    double* dvdy = new double[Nx*Ny];
+    double* dvdx = new double[Nxy];
+    double* dvdy = new double[Nxy];
     
-    double* dhdx = new double[Nx*Ny];
-    double* dhdy = new double[Nx*Ny];
+    double* dhdx = new double[Nxy];
+    double* dhdy = new double[Nxy];
     
     
     
-    double* temp = new double[3*Nx*Ny];
-    double* allKs = new double[3*Nx*Ny];
+    //double* temp = new double[3*Nx*Ny];
+    
+    double* k1 = new double[Nxy3];
+    double* k2 = new double[Nxy3];
+    double* k3 = new double[Nxy3];
+    double* k4 = new double[Nxy3];
+    
+    //double* allKs = new double[3*Nx*Ny];
     // time propagation (for or while)
     int counter = 0;
-    for (double time = 0; time < T+dt/2; time += dt) { //T and dt are double, so easier to make time double than try and cast them to int
+    
+    for (double time = 0; time < T+dtover2; time += dt) { //T and dt are double, so easier to make time double than try and cast them to int
         //This is for debugging, it prints everything
         
         //k1 = calcF(yn)
@@ -127,65 +144,66 @@ void ShallowWater::TimeIntFor() {
                 dudx,dudy,
                 dvdx,dvdy,
                 dhdx,dhdy,
-                temp);                
+                k1);                
         
         #pragma omp parallel for
-        for (int i = 0;i<3*Nx*Ny;i++) {
-            allKs[i] = temp[i];
+        for (int i = 0;i<Nxy3;i++) {
+            //allKs[i] = temp[i];
         //}
         
 
         //k2 = calcF(yn + dt*k1/2);
         //for (i = 0;i<3*Nx*Ny;i++) {
-            temp[i] = yn[i] + (dt/2) * temp[i];
+            //temp[i] = yn[i] + (dt/2) * temp[i];
+            k2[i] = yn[i] + dtover2 * k1[i];
         }
-        calcFFor(  temp,
+        calcFFor(  k2,
                 dudx,dudy,
                 dvdx,dvdy,
                 dhdx,dhdy,
-                temp);
+                k2);
                 
         #pragma omp parallel for
-        for (int i = 0;i<3*Nx*Ny;i++) {
-            allKs[i] += 2*temp[i];
+        for (int i = 0;i<Nxy3;i++) {
+            //allKs[i] += 2*temp[i];
         //}
         
         
         //k3 = calcF(yn + dt*k2/2);
         
         //for (i = 0;i<3*Nx*Ny;i++) {
-            temp[i] = yn[i] + (dt/2)*temp[i];
+            k3[i] = yn[i] + dtover2*k2[i];
         }
-        calcFFor(  temp,
+        calcFFor(  k3,
                 dudx,dudy,
                 dvdx,dvdy,
                 dhdx,dhdy,
-                temp);
+                k3);
                 
         #pragma omp parallel for
-        for (int i = 0;i<3*Nx*Ny;i++) {
-            allKs[i] += 2*temp[i];
+        for (int i = 0;i<Nxy3;i++) {
+            //allKs[i] += 2*temp[i];
         //}
         
         //k4 = calcF(yn + dt*k3);
         
         //for (i = 0;i<3*Nx*Ny;i++) {
-            temp[i] = yn[i] + dt*temp[i];
+            k4[i] = yn[i] + dt*k3[i];
         }
-        calcFFor(  temp,
+        calcFFor(  k4,
                 dudx,dudy,
                 dvdx,dvdy,
                 dhdx,dhdy,
-                temp);
+                k4);
         #pragma omp parallel for
-        for (int i = 0;i<3*Nx*Ny;i++) {
-            allKs[i] += temp[i];
+        for (int i = 0;i<Nxy3;i++) {
+            //allKs[i] += temp[i];
         //}
         
         //yn = yn + (1/6) * (k1 + 2*k2 + 2*k3 + k4)*dt;
 
         //for (i = 0;i<3*Nx*Ny;i++) {
-            yn[i] += (dt/6)*allKs[i];
+            yn[i] += (dtover6)*(k1[i] +2*k2[i] + 2*k3[i] + k4[i]);
         }        
         counter ++;
         
@@ -203,8 +221,13 @@ void ShallowWater::TimeIntFor() {
     delete[] dhdx;
     delete[] dhdy;
     
-    delete[] allKs;
-    delete[] temp;
+    //delete[] allKs;
+    //delete[] temp;
+    
+    delete[] k1;
+    delete[] k2;
+    delete[] k3;
+    delete[] k4;
 };
 void ShallowWater::calcFBLAS( double* yn,
                             double* dudx, double* dudy,
@@ -401,25 +424,25 @@ void ShallowWater::TimeIntBlas() {
     
     
     //calculate derivatives (these are being done with for loops, could also be calculated using blas routines)
-    double* dudx = new double[Nx*Ny];
-    double* dudy = new double[Nx*Ny];
+    double* dudx = new double[Nxy];
+    double* dudy = new double[Nxy];
     
-    double* dvdx = new double[Nx*Ny];
-    double* dvdy = new double[Nx*Ny];
+    double* dvdx = new double[Nxy];
+    double* dvdy = new double[Nxy];
     
     double* dhdx = new double[Nx*Ny];
     double* dhdy = new double[Nx*Ny];
     
-    double* ddx = new double[3*Nx*Ny];
-    double* ddy = new double[3*Nx*Ny];
+    double* ddx = new double[Nxy3];
+    double* ddy = new double[Nxy3];
     
     
-    double* temp = new double[3*Nx*Ny];
-    double* workspace = new double[3*Nx*Ny];
-    double* allKs = new double[3*Nx*Ny];
+    double* temp = new double[Nxy3];
+    double* workspace = new double[Nxy3];
+    double* allKs = new double[Nxy3];
     
-    double* A = new double[5*3*Nx*Ny];
-    double* B = new double[3*3*Nx*Ny];
+    double* A = new double[5*Nxy3];
+    double* B = new double[3*Nxy3];
     
     
     
@@ -443,31 +466,31 @@ void ShallowWater::TimeIntBlas() {
     double* derXMat = new double[lda*paddedLenX]; //dimensions corresponding to largest grid dimension
     #pragma omp parallel for
     for (int i = 0; i<paddedLenX;i++) {
-        derXMat[i*lda]   = -0.0167;     //c7
-        derXMat[i*lda+1] =  0.1500;     //c6
-        derXMat[i*lda+2] = -0.7500;     //c5
-        derXMat[i*lda+3] =  0;          //c4
-        derXMat[i*lda+4] =  0.7500;     //c3
-        derXMat[i*lda+5] = -0.1500;     //c2
-        derXMat[i*lda+6] =  0.0167;     //c1
+        derXMat[i*lda]   = -0.0167;     //7
+        derXMat[i*lda+1] =  0.1500;     //6
+        derXMat[i*lda+2] = -0.7500;     //5
+        derXMat[i*lda+3] =  0;          //4
+        derXMat[i*lda+4] =  0.7500;     //3
+        derXMat[i*lda+5] = -0.1500;     //2
+        derXMat[i*lda+6] =  0.0167;     //1
     }
     
     int paddedLenY = Ny + 6;
     double* derYMat = new double[lda*paddedLenY]; //dimensions corresponding to largest grid dimension
     #pragma omp parallel for
     for (int i = 0; i<paddedLenY;i++) {
-        derYMat[i*lda]   = -0.0167;     //c7
-        derYMat[i*lda+1] =  0.1500;     //c6
-        derYMat[i*lda+2] = -0.7500;     //c5
-        derYMat[i*lda+3] =  0;          //c4
-        derYMat[i*lda+4] =  0.7500;     //c3
-        derYMat[i*lda+5] = -0.1500;     //c2
-        derYMat[i*lda+6] =  0.0167;     //c1
+        derYMat[i*lda]   = -0.0167;     //7
+        derYMat[i*lda+1] =  0.1500;     //6
+        derYMat[i*lda+2] = -0.7500;     //5
+        derYMat[i*lda+3] =  0;          //4
+        derYMat[i*lda+4] =  0.7500;     //3
+        derYMat[i*lda+5] = -0.1500;     //2
+        derYMat[i*lda+6] =  0.0167;     //1
     }
     
     // time propagation
     int counter = 0;
-    for (double time = 0; time < T + dt/2; time += dt) {
+    for (double time = 0; time < T + dtover2; time += dt) {
         
         
         
@@ -484,11 +507,11 @@ void ShallowWater::TimeIntBlas() {
                     vect,ans);           
         
         #pragma omp parallel for
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        for (int i = 0;i<Nxy3;i++) {
             allKs[i] = temp[i];
         
             //k2 = calcF(yn + dt*k1/2);
-            temp[i] = yn[i] + (dt/2) * temp[i];
+            temp[i] = yn[i] + (dtover2) * temp[i];
         }
         calcFBLAS(  temp,
                     dudx, dudy,
@@ -501,13 +524,13 @@ void ShallowWater::TimeIntBlas() {
                     derXMat,derYMat,
                     vect,ans); 
         #pragma omp parallel for
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        for (int i = 0;i<Nxy3;i++) {
             allKs[i] += 2*temp[i];
         
         
         
             //k3 = calcF(yn + dt*k2/2);
-            temp[i] = yn[i] + (dt/2)*temp[i];
+            temp[i] = yn[i] + (dtover2)*temp[i];
         }
         calcFBLAS(  temp,
                     dudx, dudy,
@@ -521,7 +544,7 @@ void ShallowWater::TimeIntBlas() {
                     vect,ans);  
                 
         #pragma omp parallel for
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        for (int i = 0;i<Nxy3;i++) {
             allKs[i] += 2*temp[i];
         
         
@@ -539,12 +562,12 @@ void ShallowWater::TimeIntBlas() {
                     derXMat,derYMat,
                     vect,ans); 
         #pragma omp parallel for
-        for (int i = 0;i<3*Nx*Ny;i++) {
+        for (int i = 0;i<Nxy3;i++) {
             allKs[i] += temp[i];
         
         
             //yn = yn + (1/6) * (k1 + 2*k2 + 2*k3 + k4)*dt;
-            yn[i] += (dt/6)*allKs[i];
+            yn[i] += (dtover6)*allKs[i];
         }    
         counter++;
     }
@@ -613,30 +636,32 @@ void ShallowWater::calcFFor( double* yn,
             //#pragma omp section    
             derYFor(yn,dudy);
             //#pragma omp section  
-            derXFor(yn+Nx*Ny,dvdx);
+            derXFor(yn+Nxy,dvdx);
             //#pragma omp section    
-            derYFor(yn+Nx*Ny,dvdy);
+            derYFor(yn+Nxy,dvdy);
             //#pragma omp section  
-            derXFor(yn+2*Nx*Ny,dhdx);
+            derXFor(yn+Nxy2,dhdx);
             //#pragma omp section    
-            derYFor(yn+2*Nx*Ny,dhdy);
+            derYFor(yn+Nxy2,dhdy);
         //}
         //}
-        //f1 = - (g*dhdx + u.*dudx) - (v.*dudy);
+        
         
         #pragma omp parallel for
-        for (int i = 0; i<Nx*Ny; i++) {
-            f[i] = -9.81*dhdx[i] - yn[i]*dudx[i] - yn[Nx*Ny + i]*dudy[i];
+        for (int i = 0; i<Nxy; i++) {
+
+            //f1 = - (g*dhdx + u.*dudx) - (v.*dudy);
+            f[i] = -9.81*dhdx[i] - yn[i]*dudx[i] - yn[Nxy + i]*dudy[i];
         
         
         
         //f2 = - (u.*dvdx) - (g*dhdy + v.*dvdy);
-            f[Nx*Ny + i] = - yn[i]*dvdx[i] - 9.81*dhdy[i] - yn[Nx*Ny + i]*dvdy[i];
+            f[Nxy + i] = - yn[i]*dvdx[i] - 9.81*dhdy[i] - yn[Nxy + i]*dvdy[i];
         
         
         
         //f3 = - (u.*dhdx + h.*dudx) - (v.*dhdy + h.*dvdy);
-            f[2*Nx*Ny + i] = - yn[i]*dhdx[i] - yn[2*Nx*Ny + i]*dudx[i] - yn[Nx*Ny + i]*dhdy[i] - yn[2*Nx*Ny + i]*dvdy[i];
+            f[Nxy2 + i] = - yn[i]*dhdx[i] - yn[Nxy2 + i]*dudx[i] - yn[Nxy + i]*dhdy[i] - yn[Nxy2 + i]*dvdy[i];
         }
         
     };
@@ -644,11 +669,13 @@ void ShallowWater::calcFFor( double* yn,
 void ShallowWater::derXFor(const double* data, double* derivative) {
         #pragma omp parallel for
         for (int yrow = 0; yrow <Ny; yrow++) {
+            //int temp;
             //derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,tempDer,1);
             //0th
-            derivative[yrow] =      data[(Nx-3)*Ny+yrow] * (-0.0167) +
+            derivative[yrow] =      data[(Nx-3)*Ny+yrow] * (-0.0167) +                  
                                     data[(Nx-2)*Ny+yrow] * 0.1500 +
                                     data[(Nx-1)*Ny+yrow] * (-0.7500) +
+                                    //data[(0)*Ny+yrow] * 0 +
                                     data[(1)*Ny+yrow]    * 0.7500 +
                                     data[(2)*Ny+yrow]    * (-0.1500) +
                                     data[(3)*Ny+yrow]    * 0.0167;
@@ -656,6 +683,7 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
             derivative[1*Ny+yrow] = data[(Nx-2)*Ny+yrow] * (-0.0167) +
                                     data[(Nx-1)*Ny+yrow] * 0.1500 +
                                     data[(0)*Ny+yrow]    * (-0.7500) +
+                                    //data[(1)*Ny+yrow] * 0 +
                                     data[(2)*Ny+yrow]    * 0.7500 +
                                     data[(3)*Ny+yrow]    * (-0.1500) +
                                     data[(4)*Ny+yrow]    * 0.0167;
@@ -663,6 +691,7 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
             derivative[2*Ny+yrow] = data[(Nx-1)*Ny+yrow] * (-0.0167) +
                                     data[(0)*Ny+yrow]    * 0.1500 +
                                     data[(1)*Ny+yrow]    * (-0.7500) +
+                                    //data[(2)*Ny+yrow] * 0 +
                                     data[(3)*Ny+yrow]    * 0.7500 +
                                     data[(4)*Ny+yrow]    * (-0.1500) +
                                     data[(5)*Ny+yrow]    * 0.0167;
@@ -671,6 +700,7 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
             derivative[(Nx-1)*Ny+yrow] =   data[(Nx-4)*Ny+yrow] * (-0.0167) +
                                            data[(Nx-3)*Ny+yrow] * 0.1500 +
                                            data[(Nx-2)*Ny+yrow] * (-0.7500) +
+                                           //data[(Nx-1)*Ny+yrow] * 0 +
                                            data[(0)*Ny+yrow]    * 0.7500 +
                                            data[(1)*Ny+yrow]    * (-0.1500) +
                                            data[(2)*Ny+yrow]    * 0.0167;
@@ -678,6 +708,7 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
             derivative[(Nx-2)*Ny+yrow] =   data[(Nx-5)*Ny+yrow] * (-0.0167) +
                                            data[(Nx-4)*Ny+yrow] * 0.1500 +
                                            data[(Nx-3)*Ny+yrow] * (-0.7500) +
+                                           //data[(Nx-2)*Ny+yrow] * 0 +
                                            data[(Nx-1)*Ny+yrow] * 0.7500 +
                                            data[(0)*Ny+yrow]    * (-0.1500) +
                                            data[(1)*Ny+yrow]    * 0.0167;
@@ -685,17 +716,30 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
             derivative[(Nx-3)*Ny+yrow] =   data[(Nx-6)*Ny+yrow] * (-0.0167) +
                                            data[(Nx-5)*Ny+yrow] * 0.1500 +
                                            data[(Nx-4)*Ny+yrow] * (-0.7500) +
+                                           //data[(Nx-3)*Ny+yrow] * 0 +
                                            data[(Nx-2)*Ny+yrow] * 0.7500 +
                                            data[(Nx-1)*Ny+yrow] * (-0.1500) +
                                            data[(0)*Ny+yrow]    * 0.0167;
             
             for (int xcol = 3; xcol < Nx-3; xcol++) {
+                /*
+                temp = (xcol)*Ny+yrow;
+                derivative[xcol*Ny+yrow] =     data[temp-Ny-Ny-Ny] * (-0.0167) +
+                                               data[temp-Ny-Ny] * 0.1500 +
+                                               data[temp-Ny] * (-0.7500) +
+                                               //data[temp] * (0) +
+                                               data[temp+Ny] * 0.7500 +
+                                               data[temp+Ny+Ny] * (-0.1500) +
+                                               data[temp+Ny+Ny+Ny] * 0.0167;
+                */
                 derivative[xcol*Ny+yrow] =     data[(xcol-3)*Ny+yrow] * (-0.0167) +
                                                data[(xcol-2)*Ny+yrow] * 0.1500 +
                                                data[(xcol-1)*Ny+yrow] * (-0.7500) +
+                                               //data[(xcol)*Ny+yrow] * (0) +
                                                data[(xcol+1)*Ny+yrow] * 0.7500 +
                                                data[(xcol+2)*Ny+yrow] * (-0.1500) +
                                                data[(xcol+3)*Ny+yrow] * 0.0167;
+                
             }                                                         
 
         }
@@ -704,57 +748,67 @@ void ShallowWater::derXFor(const double* data, double* derivative) {
 void ShallowWater::derYFor(const double* data, double* derivative) {
     #pragma omp parallel for
     for (int xcol = 0; xcol<Nx; xcol++) {
+            int index = (xcol)*Ny;
             //0th
-            derivative[xcol*Ny] =  data[(xcol)*Ny+Ny-3] * (-0.0167) +
-                                   data[(xcol)*Ny+Ny-2] * 0.1500 +
-                                   data[(xcol)*Ny+Ny-1] * (-0.7500) +
-                                   data[(xcol)*Ny+1] * 0.7500 +
-                                   data[(xcol)*Ny+2] * (-0.1500) +
-                                   data[(xcol)*Ny+3]    * 0.0167;
+            derivative[xcol*Ny] =  data[index+Ny-3] * (-0.0167) +
+                                   data[index+Ny-2] * 0.1500 +
+                                   data[index+Ny-1] * (-0.7500) +
+                                   //data[(xcol)*Ny+0] * 0 +
+                                   data[index+1] * 0.7500 +
+                                   data[index+2] * (-0.1500) +
+                                   data[index+3]    * 0.0167;
             //1st
-            derivative[xcol*Ny+1] =    data[(xcol)*Ny+Ny-2] * (-0.0167) +
-                                       data[(xcol)*Ny+Ny-1] * 0.1500 +
-                                       data[(xcol)*Ny+0] * (-0.7500) +
-                                       data[(xcol)*Ny+2] * 0.7500 +
-                                       data[(xcol)*Ny+3] * (-0.1500) +
-                                       data[(xcol)*Ny+4]    * 0.0167;
+            derivative[xcol*Ny+1] =    data[index+Ny-2] * (-0.0167) +
+                                       data[index+Ny-1] * 0.1500 +
+                                       data[index+0] * (-0.7500) +
+                                       //data[(xcol)*Ny+1] * 0 +
+                                       data[index+2] * 0.7500 +
+                                       data[index+3] * (-0.1500) +
+                                       data[index+4]    * 0.0167;
             //2nd
-            derivative[xcol*Ny+2] =    data[(xcol)*Ny+Ny-1] * (-0.0167) +
-                                       data[(xcol)*Ny+0] * 0.1500 +
-                                       data[(xcol)*Ny+1] * (-0.7500) +
-                                       data[(xcol)*Ny+3] * 0.7500 +
-                                       data[(xcol)*Ny+4] * (-0.1500) +
-                                       data[(xcol)*Ny+5]    * 0.0167;
+            derivative[xcol*Ny+2] =    data[index+Ny-1] * (-0.0167) +
+                                       data[index+0] * 0.1500 +
+                                       data[index+1] * (-0.7500) +
+                                       //data[(xcol)*Ny+2] * 0 +
+                                       data[index+3] * 0.7500 +
+                                       data[index+4] * (-0.1500) +
+                                       data[index+5]    * 0.0167;
             
             //last
-            derivative[xcol*Ny+Ny-1] = data[(xcol)*Ny+Ny-4] * (-0.0167) +
-                                       data[(xcol)*Ny+Ny-3] * 0.1500 +
-                                       data[(xcol)*Ny+Ny-2] * (-0.7500) +
-                                       data[(xcol)*Ny+0] * 0.7500 +
-                                       data[(xcol)*Ny+1] * (-0.1500) +
-                                       data[(xcol)*Ny+2]    * 0.0167;
+            derivative[xcol*Ny+Ny-1] = data[index+Ny-4] * (-0.0167) +
+                                       data[index+Ny-3] * 0.1500 +
+                                       data[index+Ny-2] * (-0.7500) +
+                                       //data[(xcol)*Ny+Ny-1] * 0 +
+                                       data[index+0] * 0.7500 +
+                                       data[index+1] * (-0.1500) +
+                                       data[index+2]    * 0.0167;
             //second to last
-            derivative[xcol*Ny+Ny-2] = data[(xcol)*Ny+Ny-5] * (-0.0167) +
-                                       data[(xcol)*Ny+Ny-4] * 0.1500 +
-                                       data[(xcol)*Ny+Ny-3] * (-0.7500) +
-                                       data[(xcol)*Ny+Ny-1] * 0.7500 +
-                                       data[(xcol)*Ny+0] * (-0.1500) +
-                                       data[(xcol)*Ny+1]    * 0.0167;
+            derivative[xcol*Ny+Ny-2] = data[index+Ny-5] * (-0.0167) +
+                                       data[index+Ny-4] * 0.1500 +
+                                       data[index+Ny-3] * (-0.7500) +
+                                       //data[(xcol)*Ny+Ny-2] * 0 +
+                                       data[index+Ny-1] * 0.7500 +
+                                       data[index+0] * (-0.1500) +
+                                       data[index+1]    * 0.0167;
             //third to last
-            derivative[xcol*Ny+Ny-3] = data[(xcol)*Ny+Ny-6] * (-0.0167) +
-                                       data[(xcol)*Ny+Ny-5] * 0.1500 +
-                                       data[(xcol)*Ny+Ny-4] * (-0.7500) +
-                                       data[(xcol)*Ny+Ny-2] * 0.7500 +
-                                       data[(xcol)*Ny+Ny-1] * (-0.1500) +
-                                       data[(xcol)*Ny+0]    * 0.0167;
+            derivative[xcol*Ny+Ny-3] = data[index+Ny-6] * (-0.0167) +
+                                       data[index+Ny-5] * 0.1500 +
+                                       data[index+Ny-4] * (-0.7500) +
+                                       //data[(xcol)*Ny+Ny-3] * 0 +
+                                       data[index+Ny-2] * 0.7500 +
+                                       data[index+Ny-1] * (-0.1500) +
+                                       data[index+0]    * 0.0167;
             
             for (int yrow = 3;yrow<Ny-3;yrow++) {                
-                derivative[xcol*Ny+yrow] = data[(xcol)*Ny+yrow-3] * (-0.0167) +
-                                           data[(xcol)*Ny+yrow-2] * 0.1500 +
-                                           data[(xcol)*Ny+yrow-1] * (-0.7500) +
-                                           data[(xcol)*Ny+yrow+1] * 0.7500 +
-                                           data[(xcol)*Ny+yrow+2] * (-0.1500) +
-                                           data[(xcol)*Ny+yrow+3]    * 0.0167;
+                
+                derivative[xcol*Ny+yrow] = data[index+yrow-3] * (-0.0167) +
+                                           data[index+yrow-2] * 0.1500 +
+                                           data[index+yrow-1] * (-0.7500) +
+                                           data[index+yrow+1] * 0.7500 +
+                                           data[index+yrow+2] * (-0.1500) +
+                                           data[index+yrow+3]    * 0.0167;
+                
+                //derivative[xcol*Ny+yrow] = cblas_ddot(7,stencil,1,data+(xcol)*Ny+yrow-3,1);
 
             }
         
