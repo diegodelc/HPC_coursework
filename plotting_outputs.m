@@ -1,6 +1,7 @@
 clc
 clear
-close all
+
+
 
 % read data
 path = "./cw_workspace/serial_implementation/output.txt";
@@ -29,7 +30,18 @@ end
 
 [X,Y] = meshgrid(1:Nx,1:Ny); 
 
+X = X';
+Y = Y';
 
-% plot
+
+
 figure()
-surf(X,Y,H);
+contourf(X,Y,H);
+xlabel('x')
+ylabel('y')
+colorbar;
+
+%figure()
+%surf(X,Y,H);
+
+

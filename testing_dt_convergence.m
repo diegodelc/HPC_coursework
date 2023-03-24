@@ -19,14 +19,37 @@ h2 = [9.96644518845135607,...
     9.96218944533607953,...
     9.96193403608311634];
 
+%new
+dt3 = [0.1,0.08,0.05,0.01,0.005,0.001]
+h3 = [9.88891754094222541,...
+    9.88840158682265979,...
+    9.88908366049592047,...    
+    9.88714178222584650,...
+    9.88690381366312465,...
+     9.88673183502522512]
+
 %% Evaluation and plotting
 
-thing = @(h) abs(h-h(end));
-h1 = thing(h1);
-h2 = thing(h2);
+ideal = @(x) 4*x -0.03;
+
+thing = @(h) abs(h(1:end-1)-h(end));
+
+error = h3-h3(end)
+
+myfit = fit(log(dt3(3:end))',log(h3(3:end))','poly1')
 
 figure()
-loglog(dt,h1,'-x')
-dt = log(dt);
-h1 = log(h1)
-order = fit(dt(1:end-1)',h1(1:end-1)','poly1')
+loglog(dt3(3:end),error(3:end),'-x')
+hold on
+loglog(dt3,ideal(dt3),'o--')
+%plot(dt3(1:end-3)',myfit(dt3(1:end-3)))
+
+%%
+x1 = 0.05
+y1 = 0.002352
+
+x2 = 0.005
+y2 = 0.000172
+
+grad = 1/(y1-y2)*(x1-x2)
+
