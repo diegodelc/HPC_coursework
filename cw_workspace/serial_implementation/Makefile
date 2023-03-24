@@ -13,6 +13,19 @@ default: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CXX) -o $@ $^ $(LIBS)
 
+test1: $(TARGET)
+	./$(TARGET) --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 1 --intType 2
+
+test2: $(TARGET)
+	./$(TARGET) --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 2 --intType 2
+
+test3: $(TARGET)
+	./$(TARGET) --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 3 --intType 2
+
+test4: $(TARGET)
+	./$(TARGET) --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 4 --intType 2
+
+
 profilerFor: $(TARGET)
 	rm -r testing.er
 	collect -o testing.er ./$(TARGET) --T 80 --ic 4 --intType 1

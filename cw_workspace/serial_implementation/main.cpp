@@ -33,12 +33,12 @@ int main(int argc, char **argv)
     opts.add_options()
         ("help", "Prints list of options")
         ("dt", po::value<double>()->default_value(0.1), "Time step")
-        ("T", po::value<double>()->default_value(5.0), "Total simulation time")
+        ("T", po::value<double>()->default_value(80), "Total simulation time")
         ("Nx", po::value<int>()->default_value(100), "Number of grid points in x")
         ("Ny", po::value<int>()->default_value(100), "Number of grid points in y")
         ("ic", po::value<int>()->default_value(4), "Initial conditions")
         //Not in assignement brief
-        ("intType", po::value<int>()->default_value(1), "1: For loop; 2: BLAS")
+        ("intType", po::value<int>()->default_value(2), "1: For loop; 2: BLAS")
         ("o", po::value<string>()->default_value("output.txt"), "Name of output file")
         ("verb", po::value<int>()->default_value(0), "Amount of information printed");
     // Default execution:

@@ -661,17 +661,17 @@ void ShallowWater::calcFFor( double* yn,
         //#pragma omp sections
         //{
             //#pragma omp section    
-            derXFor(yn,dudx);
-            //#pragma omp section    
-            derYFor(yn,dudy);
-            //#pragma omp section  
-            derXFor(yn+Nxy,dvdx);
-            //#pragma omp section    
-            derYFor(yn+Nxy,dvdy);
-            //#pragma omp section  
-            derXFor(yn+Nxy2,dhdx);
-            //#pragma omp section    
-            derYFor(yn+Nxy2,dhdy);
+        derXFor(yn,dudx);
+        //#pragma omp section    
+        derYFor(yn,dudy);
+        //#pragma omp section  
+        derXFor(yn+Nxy,dvdx);
+        //#pragma omp section    
+        derYFor(yn+Nxy,dvdy);
+        //#pragma omp section  
+        derXFor(yn+Nxy2,dhdx);
+        //#pragma omp section    
+        derYFor(yn+Nxy2,dhdy);
         //}
         //}
         
@@ -684,12 +684,12 @@ void ShallowWater::calcFFor( double* yn,
         
         
         
-        //f2 = - (u.*dvdx) - (g*dhdy + v.*dvdy);
+            //f2 = - (u.*dvdx) - (g*dhdy + v.*dvdy);
             f[Nxy + i] = - yn[i]*dvdx[i] - 9.81*dhdy[i] - yn[Nxy + i]*dvdy[i];
         
         
         
-        //f3 = - (u.*dhdx + h.*dudx) - (v.*dhdy + h.*dvdy);
+            //f3 = - (u.*dhdx + h.*dudx) - (v.*dhdy + h.*dvdy);
             f[Nxy2 + i] = - yn[i]*dhdx[i] - yn[Nxy2 + i]*dudx[i] - yn[Nxy + i]*dhdy[i] - yn[Nxy2 + i]*dvdy[i];
         }
         
