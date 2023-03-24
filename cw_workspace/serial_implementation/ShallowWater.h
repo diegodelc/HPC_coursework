@@ -24,10 +24,13 @@ public:
         int Nxy2;
         int Nxy3;
         
+        int verb;
+        
         ShallowWater(double dt_in,double T_in,
                             int Nx_in,int Ny_in,
                             int ic_in,
-                            int integrationType_in);
+                            int integrationType_in,
+                            int verb_in);
         
         void SetInitialConditions();
         

@@ -74,7 +74,7 @@ int main(int argc, char **argv)
         cout << "\tintType: " << whichIntegrationMethod << endl;
     }
     //Instantiate class and parameters via constructor
-    ShallowWater myInstance(dt,T,Nx,Ny,ic,whichIntegrationMethod);
+    ShallowWater myInstance(dt,T,Nx,Ny,ic,whichIntegrationMethod,verb);
     
     // Initialise simulation
     myInstance.SetInitialConditions();
@@ -84,7 +84,9 @@ int main(int argc, char **argv)
     
     
     // output to file
-    cout << endl << "Writing output to file: ";
+    if (verb == 1) {
+        cout << endl << "Writing output to file: ";
+    }
     string filename = vm["o"].as<std::string>();
     //string filename = "output.txt";
     ofstream vOut(filename, ios::out | ios::trunc);
@@ -99,19 +101,20 @@ int main(int argc, char **argv)
         }
     }
     vOut.close();
-    cout << "DONE" << endl;
+    if (verb == 1) {
+        cout << "DONE" << endl;
     
-    cout << endl;
-    cout << "Probed values:" << endl;
-    cout.precision(17);
-    int xprobe = 25;
-    int yprobe = 25;
-    cout << "\t(" << xprobe << "," << yprobe << "): " << fixed << myInstance.yn[yprobe*Ny+xprobe + 2*Nx*Ny] << endl;
-    
-    xprobe = 45;
-    yprobe = 55;
-    cout << "\t(" << xprobe << "," << yprobe << "): " << fixed << myInstance.yn[yprobe*Ny+xprobe + 2*Nx*Ny] << endl;
-    
+        cout << endl;
+        cout << "Probed values:" << endl;
+        cout.precision(17);
+        int xprobe = 25;
+        int yprobe = 25;
+        cout << "\t(" << xprobe << "," << yprobe << "): " << fixed << myInstance.yn[yprobe*Ny+xprobe + 2*Nx*Ny] << endl;
+        
+        xprobe = 45;
+        yprobe = 55;
+        cout << "\t(" << xprobe << "," << yprobe << "): " << fixed << myInstance.yn[yprobe*Ny+xprobe + 2*Nx*Ny] << endl;
+    }
     
     return 0;
 }

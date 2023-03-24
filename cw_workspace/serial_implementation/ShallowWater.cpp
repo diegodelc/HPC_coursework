@@ -11,8 +11,12 @@ using namespace std;
 ShallowWater::ShallowWater(double dt_in,double T_in,
                             int Nx_in,int Ny_in,
                             int ic_in,
-                            int integrationType_in) {
-            cout << endl << "Setting parameters: ";
+                            int integrationType_in,
+                            int verb_in) {
+            verb = verb_in;
+            if (verb == 1) {
+                cout << endl << "Setting parameters: ";
+            }
             dt = dt_in;
             dtover2 = dt/2;
             dtover6 = dt/6;
@@ -29,7 +33,9 @@ ShallowWater::ShallowWater(double dt_in,double T_in,
             //u = new double[Nx*Ny];
             //v = new double[Nx*Ny];
             //h = new double[Nx*Ny];
-            cout << "DONE" << endl;
+            if (verb == 1) {
+                cout << "DONE" << endl;
+            }
             
         };
         
@@ -41,14 +47,15 @@ void ShallowWater::SetInitialConditions() {
                 h is initialised as one of four intial conditions, specified via the parameter 'ic'
             */
             
-            cout << endl << "Setting initial conditions: ";
-            int xNy;
+            if (verb == 1) {
+                cout << endl << "Setting initial conditions: ";
+            }
             #pragma omp parallel for
             for (int x = 0;x<Nx; x++) {
-                xNy = x*Ny;
+                
                 
                 for (int y = 0;y<Ny; y++) {
-                    yn[xNy + y] = 0; //u
+                    yn[x*Ny + y] = 0; //u
                     yn[Nxy + x*Ny + y] = 0; //v
                 }
             }
@@ -61,10 +68,10 @@ void ShallowWater::SetInitialConditions() {
                 #pragma omp parallel for
                 for (int x = 0;x<Nx; x++) {
                     xd = (double)x;
-                    xNy = x*Ny;
+                    
                     //ydouble = 0;
                     for (int y = 0;y<Ny; y++) {
-                        yn[Nxy2 + xNy + y] = 10 + exp(-(xd-50)*(xd-50)/25);
+                        yn[Nxy2 + x*Ny + y] = 10 + exp(-(xd-50)*(xd-50)/25);
                         //ydouble++;
                     }
                     //xdouble++;
@@ -84,10 +91,10 @@ void ShallowWater::SetInitialConditions() {
                 #pragma omp parallel for
                 for (int x = 0;x<Nx; x++) {
                     xd = (double)x;
-                    xNy = x*Ny;
+                    
                     for (int y = 0;y<Ny; y++) {
                         yd = (double)y;
-                        yn[Nxy2 + xNy + y] = 10 + exp(-((xd-50)*(xd-50) + (yd-50)*(yd-50))/25);
+                        yn[Nxy2 + x*Ny + y] = 10 + exp(-((xd-50)*(xd-50) + (yd-50)*(yd-50))/25);
                         //ydouble++;
                     }
                     //xdouble++;
@@ -96,11 +103,11 @@ void ShallowWater::SetInitialConditions() {
                 #pragma omp parallel for
                 for (int x = 0;x<Nx; x++) {
                     xd = (double)x;
-                    xNy = x*Ny;
+                    
                 //ydouble = 0;
                     for (int y = 0;y<Ny; y++) {
                         yd = (double)y;
-                        yn[Nxy2 + xNy + y] = 10 + exp(-((xd-25)*(xd-25) + (yd-25)*(yd-25))/25) + exp(-((xd-75)*(xd-75)+ (yd-75)*(yd-75) )/25);
+                        yn[Nxy2 + x*Ny + y] = 10 + exp(-((xd-25)*(xd-25) + (yd-25)*(yd-25))/25) + exp(-((xd-75)*(xd-75)+ (yd-75)*(yd-75) )/25);
                         //ydouble++;
                     }
                     //xdouble++;
@@ -108,8 +115,9 @@ void ShallowWater::SetInitialConditions() {
         }
             
             //cout << endl;
-            cout << "DONE" << endl;
-            
+            if (verb == 1) {
+                cout << "DONE" << endl;
+            }
         };
         
 void ShallowWater::TimeIntFor() {
@@ -209,9 +217,11 @@ void ShallowWater::TimeIntFor() {
         
     };
     
-    cout << "\tFinished iteration " << counter-1 << "/" << T/dt << endl; //subtract one since added counter at end of loop
-    //cout << "\tcounter: " << counter << endl;
-
+    if (verb == 1) {
+        cout << "\tFinished iteration " << counter-1 << "/" << T/dt << endl; //subtract one since added counter at end of loop
+        //cout << "\tcounter: " << counter << endl;
+    }
+    
     delete[] dudx;
     delete[] dudy;
     
@@ -571,8 +581,10 @@ void ShallowWater::TimeIntBlas() {
         }    
         counter++;
     }
-    cout << "\tFinished iteration " << counter-1 << "/" << T/dt << endl; //subtract one since added counter at end of loop
-    //cout << "\tcounter: " << counter << endl;
+    if (verb == 1) {
+        cout << "\tFinished iteration " << counter-1 << "/" << T/dt << endl; //subtract one since added counter at end of loop
+        //cout << "\tcounter: " << counter << endl;
+    }
     
     //delete allocations
     delete[] dudx;
@@ -602,16 +614,23 @@ void ShallowWater::TimeIntBlas() {
 };
 
 void ShallowWater::TimeIntegrate() {
-            cout << endl << "Starting time integration:" << endl;
-            
+            if (verb == 1) {
+                cout << endl << "Starting time integration:" << endl;
+            }
             if (integrationType == 1) {
-                cout << "\tFor loop implementation of time integration chosen" << endl;
+                if (verb == 1) {
+                    cout << "\tFor loop implementation of time integration chosen" << endl;
+                }
                 TimeIntFor();
             } else if (integrationType == 2) {
-                cout << "\tBLAS implementation of time integration chosen" << endl;
+                if (verb == 1) {
+                    cout << "\tBLAS implementation of time integration chosen" << endl;
+                }
                 TimeIntBlas();
             } else {
-                cout << "\tERROR: integration type <" << integrationType << "> not implemented" << endl;
+                if (verb == 1) {
+                    cout << "\tERROR: integration type <" << integrationType << "> not implemented" << endl;
+                }
                 
             }
             
